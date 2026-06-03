@@ -15,8 +15,8 @@ export const Route = createFileRoute("/login")({
 function LoginPage() {
   const { user, loginFaculty } = useApp();
   const nav = useNavigate();
-  const [email, setEmail] = useState("anika@college.edu");
-  const [password, setPassword] = useState("demo1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [remember, setRemember] = useState(true);
   const [err, setErr] = useState<string | undefined>();
@@ -32,7 +32,7 @@ function LoginPage() {
     e.preventDefault();
     setErr(undefined);
     setBusy(true);
-    await new Promise((r) => setTimeout(r, 500));
+
     const r = await loginFaculty(email, password);
     setBusy(false);
     if (!r.ok) { setErr(r.error); return; }
@@ -73,7 +73,7 @@ function LoginPage() {
             <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="size-3.5 accent-[var(--primary)]" />
             Remember me
           </label>
-          <button type="button" onClick={() => toast("Reset link sent (demo)")} className="text-primary hover:underline">
+          <button type="button" onClick={() => toast("Reset link sent")} className="text-primary hover:underline">
             Forgot password?
           </button>
         </div>

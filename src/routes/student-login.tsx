@@ -15,9 +15,9 @@ export const Route = createFileRoute("/student-login")({
 function StudentLoginPage() {
   const { user, loginStudent } = useApp();
   const nav = useNavigate();
-  const [studentId, setStudentId] = useState("S101");
-  const [email, setEmail] = useState("rahul@college.edu");
-  const [password, setPassword] = useState("student123");
+  const [studentId, setStudentId] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [show, setShow] = useState(false);
   const [err, setErr] = useState<string | undefined>();
   const [busy, setBusy] = useState(false);
@@ -31,7 +31,7 @@ function StudentLoginPage() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    await new Promise((r) => setTimeout(r, 500));
+
     const r = await loginStudent(studentId, password);
     setBusy(false);
     if (!r.ok) { setErr(r.error); return; }
@@ -59,9 +59,7 @@ function StudentLoginPage() {
         <p className="text-center text-xs text-muted-foreground">
           Faculty? <Link to="/login" className="text-primary hover:underline">Go to faculty login</Link>
         </p>
-        <p className="text-center text-[11px] text-muted-foreground">
-          Demo: S101 · rahul@college.edu · student123
-        </p>
+
       </motion.form>
     </AuthShell>
   );

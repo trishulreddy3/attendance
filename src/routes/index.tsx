@@ -61,9 +61,7 @@ function Landing() {
               I'm a Student
             </Link>
           </div>
-          <p className="mt-3 text-xs text-muted-foreground">
-            Demo faculty: <span className="font-mono">anika@college.edu</span> / <span className="font-mono">demo1234</span>
-          </p>
+
         </motion.div>
 
         <motion.div
