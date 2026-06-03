@@ -170,47 +170,57 @@ function SessionsPage() {
         )}
       </div>
 
-      <Modal open={open} onClose={() => setOpen(false)} title="New attendance session" width={560}>
-        <form onSubmit={submit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Session name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Morning Lecture" required />
-            <Field label="Subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Operating Systems" required />
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">Branch</span>
-              <select value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value as Branch })} className="h-10 w-full rounded-lg border border-input bg-card px-3 text-sm">
-                {BRANCHES.map((b) => <option key={b} value={b}>{b}</option>)}
-              </select>
-            </label>
-            <label className="block">
-              <span className="mb-1.5 block text-xs font-medium text-muted-foreground">Session type</span>
-              <select value={form.type} onChange={(e) => onType(e.target.value as SessionType)} className="h-10 w-full rounded-lg border border-input bg-card px-3 text-sm">
-                {(Object.keys(TYPE_LABELS) as SessionType[]).map((t) => <option key={t} value={t}>{TYPE_LABELS[t]}</option>)}
-              </select>
-            </label>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Start time" type="datetime-local" value={form.startTime} onChange={(e) => onStart(e.target.value)} />
-            <Field label="End time" type="datetime-local" value={form.endTime} onChange={(e) => setForm({ ...form, endTime: e.target.value })} />
-          </div>
-
-          <motion.div layout className="flex items-center gap-3 rounded-xl border border-border bg-accent/40 p-3">
-            <div className="grid size-9 place-items-center rounded-lg bg-primary/15 text-primary"><Clock className="size-4" /></div>
-            <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">Session duration</p>
-              <p className="text-sm font-semibold">{duration}</p>
+      <Modal open={open} onClose={loading ? () => {} : () => setOpen(false)} title="New attendance session" width={560}>
+        <form onSubmit={submit} className="space-y-4 relative">
+          {/* Loading overlay — blocks all interaction while request is in-flight */}
+          {loading && (
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-3 rounded-xl bg-card/80 backdrop-blur-sm">
+              <Loader2 className="size-8 animate-spin text-primary" />
+              <p className="text-sm font-medium text-muted-foreground">Creating session…</p>
             </div>
-          </motion.div>
+          )}
 
-          <div className="flex justify-end gap-2 pt-1">
-            <button type="button" onClick={() => setOpen(false)} disabled={loading} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent disabled:opacity-50">Cancel</button>
-            <button type="submit" disabled={loading} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
-              {loading ? <Loader2 className="size-4 animate-spin" /> : <QrCode className="size-4" />} {loading ? "Generating..." : "Generate QR"}
-            </button>
-          </div>
+          <fieldset disabled={loading} className="contents">
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Session name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Morning Lecture" required />
+              <Field label="Subject" value={form.subject} onChange={(e) => setForm({ ...form, subject: e.target.value })} placeholder="Operating Systems" required />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-medium text-muted-foreground">Branch</span>
+                <select value={form.branch} onChange={(e) => setForm({ ...form, branch: e.target.value as Branch })} className="h-10 w-full rounded-lg border border-input bg-card px-3 text-sm">
+                  {BRANCHES.map((b) => <option key={b} value={b}>{b}</option>)}
+                </select>
+              </label>
+              <label className="block">
+                <span className="mb-1.5 block text-xs font-medium text-muted-foreground">Session type</span>
+                <select value={form.type} onChange={(e) => onType(e.target.value as SessionType)} className="h-10 w-full rounded-lg border border-input bg-card px-3 text-sm">
+                  {(Object.keys(TYPE_LABELS) as SessionType[]).map((t) => <option key={t} value={t}>{TYPE_LABELS[t]}</option>)}
+                </select>
+              </label>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <Field label="Start time" type="datetime-local" value={form.startTime} onChange={(e) => onStart(e.target.value)} />
+              <Field label="End time" type="datetime-local" value={form.endTime} onChange={(e) => setForm({ ...form, endTime: e.target.value })} />
+            </div>
+
+            <motion.div layout className="flex items-center gap-3 rounded-xl border border-border bg-accent/40 p-3">
+              <div className="grid size-9 place-items-center rounded-lg bg-primary/15 text-primary"><Clock className="size-4" /></div>
+              <div>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">Session duration</p>
+                <p className="text-sm font-semibold">{duration}</p>
+              </div>
+            </motion.div>
+
+            <div className="flex justify-end gap-2 pt-1">
+              <button type="button" onClick={() => setOpen(false)} disabled={loading} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent disabled:opacity-50">Cancel</button>
+              <button type="submit" disabled={loading} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+                {loading ? <Loader2 className="size-4 animate-spin" /> : <QrCode className="size-4" />} {loading ? "Generating..." : "Generate QR"}
+              </button>
+            </div>
+          </fieldset>
         </form>
       </Modal>
     </div>
