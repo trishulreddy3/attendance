@@ -1,5 +1,4 @@
-const isLocal = typeof window !== "undefined" && window.location.hostname === "localhost";
-const API_BASE = isLocal ? "http://localhost:8080/api" : "https://attendance-dhvi.onrender.com/api";
+const API_BASE = "https://attendance-dhvi.onrender.com/api";
 
 export function getToken() {
   if (typeof window === "undefined") return null;

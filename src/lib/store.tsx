@@ -87,7 +87,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     const client = new Client({
-      brokerURL: window.location.hostname === "localhost" ? "ws://localhost:8080/ws" : "wss://attendance-dhvi.onrender.com/ws",
+      brokerURL: "wss://attendance-dhvi.onrender.com/ws",
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
