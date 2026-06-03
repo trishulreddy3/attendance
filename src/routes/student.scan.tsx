@@ -22,6 +22,7 @@ function ScanPage() {
   const [qrToken, setQrToken] = useState<string | null>(null);
   const [pickedSessionId, setPickedSessionId] = useState<string | null>(null);
   const [error, setError] = useState<string>("");
+  const [cachedPos, setCachedPos] = useState<{lat: number, lng: number} | null>(null);
 
   if (!me) return null;
 
@@ -31,42 +32,63 @@ function ScanPage() {
       Date.now() <= new Date(s.endTime).getTime(),
   );
 
+  // Pre-fetch location as soon as camera opens to prevent token expiration
+  useEffect(() => {
+    if (stage === "scanning") {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => setCachedPos({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+          (err) => console.log("Location pre-fetch failed:", err),
+          { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+        );
+      }
+    }
+  }, [stage]);
+
   useEffect(() => {
     if (stage !== "geo") return;
-    const t = setTimeout(() => {
-      if (!navigator.geolocation) {
-        setError("Geolocation is not supported by your browser");
-        setStage("fail");
-        return;
-      }
 
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          setStage("marking");
-          // Proceed to mark after short delay for UX
-          setTimeout(async () => {
-            if (!pickedSessionId || !qrToken) {
-              setError("Missing session or token");
-              setStage("fail");
-              return;
-            }
-            const r = await markAttendance(pickedSessionId, me.id, qrToken, pos.coords.latitude, pos.coords.longitude);
-            if (!r.ok) { setError(r.error ?? "Couldn't mark attendance"); setStage("fail"); return; }
-            setStage("success");
-            confetti({ particleCount: 80, spread: 70, origin: { y: 0.4 }, colors: ["#6366f1", "#22c55e", "#a5b4fc"] });
-          }, 800);
-        },
-        (err) => {
-          setError("Location access denied or unavailable.");
+    const performMark = async (lat: number, lng: number) => {
+      setStage("marking");
+      setTimeout(async () => {
+        if (!pickedSessionId || !qrToken) {
+          setError("Missing session or token");
           setStage("fail");
-        },
-        { enableHighAccuracy: true }
-      );
-    }, 700);
-    return () => clearTimeout(t);
-  }, [stage, pickedSessionId, qrToken, me.id, markAttendance]);
+          return;
+        }
+        const r = await markAttendance(pickedSessionId, me.id, qrToken, lat, lng);
+        if (!r.ok) { setError(r.error ?? "Couldn't mark attendance"); setStage("fail"); return; }
+        setStage("success");
+        confetti({ particleCount: 80, spread: 70, origin: { y: 0.4 }, colors: ["#6366f1", "#22c55e", "#a5b4fc"] });
+      }, 400); // reduced delay for snappier feel
+    };
 
-  const reset = () => { setStage("idle"); setPickedSessionId(null); setQrToken(null); setError(""); };
+    if (cachedPos) {
+      // Use pre-fetched location!
+      performMark(cachedPos.lat, cachedPos.lng);
+    } else {
+      // Fallback if not fetched yet
+      const t = setTimeout(() => {
+        if (!navigator.geolocation) {
+          setError("Geolocation is not supported by your browser");
+          setStage("fail");
+          return;
+        }
+
+        navigator.geolocation.getCurrentPosition(
+          (pos) => performMark(pos.coords.latitude, pos.coords.longitude),
+          (err) => {
+            setError("Location access denied or unavailable.");
+            setStage("fail");
+          },
+          { enableHighAccuracy: true }
+        );
+      }, 400);
+      return () => clearTimeout(t);
+    }
+  }, [stage, pickedSessionId, qrToken, me.id, markAttendance, cachedPos]);
+
+  const reset = () => { setStage("idle"); setPickedSessionId(null); setQrToken(null); setError(""); setCachedPos(null); };
 
   const onScan = (result: string) => {
     // Expected format: pulse://session/{sessionId}/{qrToken}

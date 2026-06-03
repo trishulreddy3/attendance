@@ -14,13 +14,16 @@ export const Route = createFileRoute("/faculty/dashboard")({
 });
 
 function Dashboard() {
-  const { currentFaculty } = useApp();
+  const { currentFaculty, sessions } = useApp();
   const me = currentFaculty();
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    api.getFacultyDashboard().then(setData).catch(console.error);
-  }, []);
+    const t = setTimeout(() => {
+      api.getFacultyDashboard().then(setData).catch(console.error);
+    }, 500);
+    return () => clearTimeout(t);
+  }, [sessions]);
 
   if (!data) return <div className="p-8 text-center text-muted-foreground">Loading dashboard...</div>;
 

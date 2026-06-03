@@ -33,6 +33,7 @@ function SessionsPage() {
   const { sessions, createSession } = useApp();
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
+  const [filter, setFilter] = useState<"all" | "active" | "ended">("all");
   const now = new Date(); now.setMinutes(0, 0, 0);
   const [form, setForm] = useState({
     name: "",
@@ -62,8 +63,9 @@ function SessionsPage() {
       subject: form.subject,
       branch: form.branch,
       type: form.type,
-      startTime: new Date(form.startTime).toISOString(),
-      endTime: new Date(form.endTime).toISOString(),
+      startTime: form.startTime + ":00", // Send exact local time (e.g. "2026-06-03T09:30:00")
+      endTime: form.endTime + ":00",
+
     });
     toast.success("Session created");
     setOpen(false);
@@ -84,8 +86,24 @@ function SessionsPage() {
         </button>
       </div>
 
+      <div className="flex items-center gap-1 rounded-lg border border-border bg-card p-1 w-fit">
+        {(["all", "active", "ended"] as const).map((f) => (
+          <button
+            key={f}
+            onClick={() => setFilter(f)}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md capitalize transition-colors ${filter === f ? "bg-accent text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground hover:bg-muted/50"}`}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
+
       <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {sorted.map((s, i) => {
+        {sorted.filter(s => {
+          if (filter === "all") return true;
+          const isLive = Date.now() >= new Date(s.startTime).getTime() && Date.now() <= new Date(s.endTime).getTime();
+          return filter === "active" ? isLive : !isLive;
+        }).map((s, i) => {
           const live = Date.now() >= new Date(s.startTime).getTime() && Date.now() <= new Date(s.endTime).getTime();
           return (
             <motion.div
@@ -126,11 +144,15 @@ function SessionsPage() {
             </motion.div>
           );
         })}
-        {sorted.length === 0 && (
+        {sorted.filter(s => {
+          if (filter === "all") return true;
+          const isLive = Date.now() >= new Date(s.startTime).getTime() && Date.now() <= new Date(s.endTime).getTime();
+          return filter === "active" ? isLive : !isLive;
+        }).length === 0 && (
           <div className="md:col-span-2 lg:col-span-3 rounded-2xl border border-dashed border-border p-12 text-center">
             <div className="mx-auto grid size-12 place-items-center rounded-full bg-muted"><QrCode className="size-5 text-muted-foreground" /></div>
-            <p className="mt-3 font-medium">No sessions yet</p>
-            <p className="text-sm text-muted-foreground">Create your first attendance session to get started.</p>
+            <p className="mt-3 font-medium">No sessions found</p>
+            <p className="text-sm text-muted-foreground">Try changing your filters or create a new session.</p>
           </div>
         )}
       </div>

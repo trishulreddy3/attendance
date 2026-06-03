@@ -16,7 +16,7 @@ function LiveSession() {
   const { id } = useParams({ from: "/faculty/sessions/$id" });
   const { sessions, students, refreshQr } = useApp();
   const session = sessions.find((s) => s.id === id);
-  const [countdown, setCountdown] = useState(10);
+  const [countdown, setCountdown] = useState(30);
   const [now, setNow] = useState(Date.now());
 
   useEffect(() => {
@@ -28,7 +28,7 @@ function LiveSession() {
     if (!session) return;
     const i = setInterval(() => {
       setCountdown((c) => {
-        if (c <= 1) { refreshQr(session.id); return 10; }
+        if (c <= 1) { refreshQr(session.id); return 30; }
         return c - 1;
       });
     }, 1000);
@@ -107,7 +107,7 @@ function LiveSession() {
 
           <div className="mt-8 flex items-center justify-between text-xs text-muted-foreground">
             <span className="font-mono truncate">{session.qrToken}</span>
-            <button onClick={() => { refreshQr(session.id); setCountdown(10); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent">
+            <button onClick={() => { refreshQr(session.id); setCountdown(30); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent">
               <RefreshCcw className="size-3.5" /> Refresh now
             </button>
           </div>

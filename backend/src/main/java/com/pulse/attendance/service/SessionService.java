@@ -62,7 +62,7 @@ public class SessionService {
                 .endTime(req.endTime())
                 .faculty(faculty)
                 .currentQrToken(java.util.UUID.randomUUID().toString())
-                .tokenExpiresAt(LocalDateTime.now().plusSeconds(10))
+                .tokenExpiresAt(LocalDateTime.now().plusSeconds(30))
                 .sessionLatitude(req.latitude())
                 .sessionLongitude(req.longitude())
                 .allowedRadiusMeters(defaultRadius)
@@ -125,7 +125,7 @@ public class SessionService {
         String newToken = java.util.UUID.randomUUID().toString();
         session.setPreviousQrToken(session.getCurrentQrToken());
         session.setCurrentQrToken(newToken);
-        session.setTokenExpiresAt(LocalDateTime.now().plusSeconds(10));
+        session.setTokenExpiresAt(LocalDateTime.now().plusSeconds(30));
         sessionRepository.save(session);
         
         // Notify clients via WebSocket

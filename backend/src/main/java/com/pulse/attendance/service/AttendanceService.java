@@ -43,6 +43,11 @@ public class AttendanceService {
             throw new ApiException("Session is not active", HttpStatus.BAD_REQUEST);
         }
 
+        // 1.5 Validate branch
+        if (!student.getBranch().equalsIgnoreCase(session.getBranch())) {
+            throw new ApiException("You do not belong to the branch for this session", HttpStatus.BAD_REQUEST);
+        }
+
         // 2. Validate student hasn't marked already
         if (attendanceRepository.existsBySessionIdAndStudentId(session.getId(), studentId)) {
             throw new ApiException("Attendance already marked", HttpStatus.BAD_REQUEST);

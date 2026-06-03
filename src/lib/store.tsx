@@ -99,7 +99,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
               ...cur,
               sessions: cur.sessions.map((x) =>
                 x.id === s.id
-                  ? { ...x, attendees: [...x.attendees.filter(a => a.studentId !== dto.studentId), { studentId: dto.studentId, at: dto.markedAt }] }
+                  ? { ...x, attendees: [...x.attendees.filter(a => a.studentId !== dto.studentId), { studentId: dto.studentId, at: dto.at }] }
                   : x
               ),
             }));
@@ -140,12 +140,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
           api.getFacultySessions()
         ]);
         update({ students, sessions });
-        setupWebSockets(sessions.filter(s => new Date(s.endTime).getTime() >= Date.now()));
+        setupWebSockets(sessions.filter((s: any) => new Date(s.endTime).getTime() >= Date.now()));
       } else {
         update({ students: [me] });
-        const sessions = await api.getActiveSessions(me.branch);
-        update({ sessions });
-        setupWebSockets(sessions);
+        const data = await api.getActiveSessions(me.branch);
+        update({ sessions: data });
+        setupWebSockets(data);
       }
     } catch (e) {
       console.error(e);
@@ -220,7 +220,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     },
     createSession: async (s) => {
       const ns = await api.createSession(s);
-      update((cur) => ({ ...cur, sessions: [ns, ...cur.sessions] }));
+      await refreshData();
       return ns;
     },
     refreshQr: async (sessionId) => {
