@@ -35,6 +35,12 @@
             box-sizing: border-box;
         }
 
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
         button {
             width: 100%;
             padding: 10px;
@@ -53,25 +59,69 @@
 </head>
 <body>
 
-    <div class="container">
-        <h2>Registration Form</h2>
+<div class="container">
+    <h2>Registration Form</h2>
 
-        <form>
-            <label for="name">Full Name</label>
-            <input type="text" id="name" placeholder="Enter your name" required>
+    <form id="registrationForm">
+        <label for="name">Full Name</label>
+        <input type="text" id="name">
+        
+        <label for="email">Email</label>
+        <input type="text" id="email">
+        
+        <label for="password">Password</label>
+        <input type="password" id="password">
+        
+        <label for="confirmPassword">Confirm Password</label>
+        <input type="password" id="confirmPassword">
 
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="Enter your email" required>
+        <div id="errorMessage" class="error"></div>
 
-            <label for="password">Password</label>
-            <input type="password" id="password" placeholder="Enter your password" required>
+        <button type="submit">Register</button>
+    </form>
+</div>
 
-            <label for="confirm-password">Confirm Password</label>
-            <input type="password" id="confirm-password" placeholder="Confirm your password" required>
+<script>
+document.getElementById("registrationForm").addEventListener("submit", function(event) {
+    event.preventDefault();
 
-            <button type="submit">Register</button>
-        </form>
-    </div>
+    let name = document.getElementById("name").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let password = document.getElementById("password").value;
+    let confirmPassword = document.getElementById("confirmPassword").value;
+    let errorMessage = document.getElementById("errorMessage");
+
+    errorMessage.textContent = "";
+
+    // Name validation
+    if (name === "") {
+        errorMessage.textContent = "Full Name is required.";
+        return;
+    }
+
+    // Email validation
+    let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailPattern.test(email)) {
+        errorMessage.textContent = "Please enter a valid email address.";
+        return;
+    }
+
+    // Password length validation
+    if (password.length < 6) {
+        errorMessage.textContent = "Password must be at least 6 characters long.";
+        return;
+    }
+
+    // Password match validation
+    if (password !== confirmPassword) {
+        errorMessage.textContent = "Passwords do not match.";
+        return;
+    }
+
+    alert("Registration Successful!");
+    document.getElementById("registrationForm").reset();
+});
+</script>
 
 </body>
 </html>

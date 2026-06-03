@@ -19,13 +19,17 @@ function Dashboard() {
   const [data, setData] = useState<any>(null);
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      api.getFacultyDashboard().then(setData).catch(console.error);
-    }, 500);
-    return () => clearTimeout(t);
+    api.getFacultyDashboard().then(setData).catch(console.error);
   }, [sessions]);
 
-  if (!data) return <div className="p-8 text-center text-muted-foreground">Loading dashboard...</div>;
+  const d = data || {
+    totalStudents: 0,
+    activeSessions: 0,
+    presentToday: 0,
+    attendanceRate: 0,
+    last7Days: [],
+    recentActivity: [],
+  };
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -37,10 +41,10 @@ function Dashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Students" value={data.totalStudents} icon={<Users className="size-4" />} />
-        <StatCard label="Active Sessions" value={data.activeSessions} icon={<Radio className="size-4" />} delay={0.05} hint={data.activeSessions ? "Live now" : "None active"} />
-        <StatCard label="Present Today" value={data.presentToday} icon={<CheckCircle2 className="size-4" />} delay={0.1} />
-        <StatCard label="Attendance Rate" value={data.attendanceRate} suffix="%" icon={<TrendingUp className="size-4" />} delay={0.15} />
+        <StatCard label="Total Students" value={d.totalStudents} icon={<Users className="size-4" />} />
+        <StatCard label="Active Sessions" value={d.activeSessions} icon={<Radio className="size-4" />} delay={0.05} hint={d.activeSessions ? "Live now" : "None active"} />
+        <StatCard label="Present Today" value={d.presentToday} icon={<CheckCircle2 className="size-4" />} delay={0.1} />
+        <StatCard label="Attendance Rate" value={d.attendanceRate} suffix="%" icon={<TrendingUp className="size-4" />} delay={0.15} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -52,9 +56,10 @@ function Dashboard() {
             </div>
             <Link to="/faculty/reports" className="text-xs text-primary hover:underline">View reports →</Link>
           </div>
-          <div className="mt-4 h-64">
+          <div className="mt-4 h-64 relative">
+            {!data && <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm"><div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div></div>}
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data.last7Days} margin={{ left: -20, right: 8, top: 8 }}>
+              <AreaChart data={d.last7Days} margin={{ left: -20, right: 8, top: 8 }}>
                 <defs>
                   <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="var(--primary)" stopOpacity={0.35} />
@@ -71,16 +76,17 @@ function Dashboard() {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl border border-border bg-card p-5">
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl border border-border bg-card p-5 relative overflow-hidden">
+          {!data && <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm"><div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div></div>}
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold">Activity</p>
             <Activity className="size-4 text-muted-foreground" />
           </div>
           <ul className="mt-4 space-y-3">
-            {data.recentActivity.length === 0 && (
+            {data && d.recentActivity.length === 0 && (
               <p className="text-sm text-muted-foreground">No activity yet — start a session.</p>
             )}
-            {data.recentActivity.map((r: any, i: number) => (
+            {d.recentActivity.map((r: any, i: number) => (
               <motion.li key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.05 }} className="flex items-start gap-3">
                 <div className="mt-1.5 size-2 rounded-full bg-success" />
                 <div className="min-w-0 flex-1">

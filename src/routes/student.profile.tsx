@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Field } from "@/components/common/Field";
 import { useApp } from "@/lib/store";
@@ -18,12 +19,19 @@ function StudentProfile() {
     mobile: me?.mobile ?? "",
     email: me?.email ?? "",
   });
+  const [loading, setLoading] = useState(false);
   if (!me) return null;
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateSelfStudent(form);
-    toast.success("Profile updated");
+    if (loading) return;
+    setLoading(true);
+    try {
+      await updateSelfStudent(form);
+      toast.success("Profile updated");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,7 +54,10 @@ function StudentProfile() {
           <Field label="Email" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           <Field label="Branch" value={me.branch} disabled />
           <div className="md:col-span-2 flex justify-end">
-            <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">Save changes</button>
+            <button type="submit" disabled={loading} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+              {loading && <Loader2 className="size-4 animate-spin" />}
+              {loading ? "Saving..." : "Save changes"}
+            </button>
           </div>
         </form>
       </motion.div>

@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { Pencil, Plus, Search, Trash2, UserPlus } from "lucide-react";
+import { Pencil, Plus, Search, Trash2, UserPlus, Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Field } from "@/components/common/Field";
@@ -25,6 +25,7 @@ function StudentsPage() {
   const [editing, setEditing] = useState<Student | null>(null);
   const [form, setForm] = useState<FormState>(empty);
   const [confirmId, setConfirmId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const filtered = useMemo(() => {
     return students.filter((s) => {
@@ -46,15 +47,21 @@ function StudentsPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (editing) {
-      await updateStudent(editing.id, form);
-      toast.success("Student updated");
-    } else {
-      const r = await addStudent(form);
-      if (!r.ok) { toast.error(r.error ?? "Failed"); return; }
-      toast.success("Student added");
+    if (loading) return;
+    setLoading(true);
+    try {
+      if (editing) {
+        await updateStudent(editing.id, form);
+        toast.success("Student updated");
+      } else {
+        const r = await addStudent(form);
+        if (!r.ok) { toast.error(r.error ?? "Failed"); return; }
+        toast.success("Student added");
+      }
+      setOpen(false);
+    } finally {
+      setLoading(false);
     }
-    setOpen(false);
   };
 
   return (
@@ -163,8 +170,11 @@ function StudentsPage() {
             <Field label="Password" type="text" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required />
           </div>
           <div className="flex justify-end gap-2 pt-2">
-            <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent">Cancel</button>
-            <button type="submit" className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">{editing ? "Save" : "Add"}</button>
+            <button type="button" onClick={() => setOpen(false)} disabled={loading} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent disabled:opacity-50">Cancel</button>
+            <button type="submit" disabled={loading} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+              {loading && <Loader2 className="size-4 animate-spin" />}
+              {editing ? (loading ? "Saving..." : "Save") : (loading ? "Adding..." : "Add")}
+            </button>
           </div>
         </form>
       </Modal>

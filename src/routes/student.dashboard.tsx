@@ -23,12 +23,19 @@ function StudentDashboard() {
     if (me) api.getStudentDashboard(me.id).then(setData).catch(console.error);
   }, [me]);
 
-  if (!me || !data) return <div className="p-8 text-center text-muted-foreground">Loading dashboard...</div>;
+  const d = data || {
+    totalClasses: 0,
+    present: 0,
+    absent: 0,
+    attendancePct: 0,
+    last7Days: [],
+    recentAttendance: [],
+  };
 
   // Ring math
   const R = 60;
   const C = 2 * Math.PI * R;
-  const dash = (data.attendancePct / 100) * C;
+  const dash = (d.attendancePct / 100) * C;
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
@@ -40,10 +47,10 @@ function StudentDashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Classes" value={data.totalClasses} icon={<BookOpen className="size-4" />} />
-        <StatCard label="Present" value={data.present} icon={<CheckCircle2 className="size-4" />} delay={0.05} />
-        <StatCard label="Absent" value={data.absent} icon={<XCircle className="size-4" />} delay={0.1} />
-        <StatCard label="Attendance %" value={data.attendancePct} suffix="%" icon={<TrendingUp className="size-4" />} delay={0.15} />
+        <StatCard label="Total Classes" value={d.totalClasses} icon={<BookOpen className="size-4" />} />
+        <StatCard label="Present" value={d.present} icon={<CheckCircle2 className="size-4" />} delay={0.05} />
+        <StatCard label="Absent" value={d.absent} icon={<XCircle className="size-4" />} delay={0.1} />
+        <StatCard label="Attendance %" value={d.attendancePct} suffix="%" icon={<TrendingUp className="size-4" />} delay={0.15} />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -62,7 +69,7 @@ function StudentDashboard() {
                 />
               </svg>
               <div className="absolute text-center">
-                <p className="text-3xl font-semibold tracking-tight"><AnimatedCounter value={data.attendancePct} suffix="%" /></p>
+                <p className="text-3xl font-semibold tracking-tight"><AnimatedCounter value={d.attendancePct} suffix="%" /></p>
                 <p className="text-xs text-muted-foreground">attendance</p>
               </div>
             </div>
@@ -74,9 +81,10 @@ function StudentDashboard() {
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="lg:col-span-2 rounded-2xl border border-border bg-card p-5">
           <p className="text-sm font-semibold">Attendance trend</p>
-          <div className="mt-4 h-56">
+          <div className="mt-4 h-56 relative">
+            {!data && <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm"><div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div></div>}
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={data.last7Days} margin={{ left: -20, top: 8 }}>
+              <LineChart data={d.last7Days} margin={{ left: -20, top: 8 }}>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
                 <XAxis dataKey="label" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
                 <YAxis stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
@@ -93,9 +101,10 @@ function StudentDashboard() {
           <p className="text-sm font-semibold">Recent attendance</p>
           <Link to="/student/history" className="text-xs text-primary hover:underline">View all →</Link>
         </div>
-        <ul className="divide-y divide-border">
-          {data.recentAttendance.length === 0 && <li className="px-5 py-10 text-center text-sm text-muted-foreground">No attendance yet — scan a QR to begin.</li>}
-          {data.recentAttendance.map((s: any, i: number) => {
+        <ul className="divide-y divide-border relative">
+          {!data && <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm"><div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div></div>}
+          {data && d.recentAttendance.length === 0 && <li className="px-5 py-10 text-center text-sm text-muted-foreground">No attendance yet — scan a QR to begin.</li>}
+          {d.recentAttendance.map((s: any, i: number) => {
             const att = s.attendees.find((a: any) => a.studentId === me.id);
             return (
               <motion.li key={s.id} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 + i * 0.04 }} className="flex items-center gap-3 px-5 py-3">

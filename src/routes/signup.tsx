@@ -35,6 +35,7 @@ function SignupPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (busy) return;
     if (!validate()) return;
     setBusy(true);
     await new Promise((r) => setTimeout(r, 600));

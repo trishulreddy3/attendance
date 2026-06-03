@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Calendar, Clock, Plus, QrCode } from "lucide-react";
+import { Calendar, Clock, Plus, QrCode, Loader2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Field } from "@/components/common/Field";
@@ -34,6 +34,7 @@ function SessionsPage() {
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "active" | "ended">("all");
+  const [loading, setLoading] = useState(false);
   const now = new Date(); now.setMinutes(0, 0, 0);
   const [form, setForm] = useState({
     name: "",
@@ -57,19 +58,25 @@ function SessionsPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     if (!form.name || !form.subject) { toast.error("Add a name & subject"); return; }
-    const s = await createSession({
-      name: form.name,
-      subject: form.subject,
-      branch: form.branch,
-      type: form.type,
-      startTime: form.startTime + ":00", // Send exact local time (e.g. "2026-06-03T09:30:00")
-      endTime: form.endTime + ":00",
+    setLoading(true);
+    try {
+      const s = await createSession({
+        name: form.name,
+        subject: form.subject,
+        branch: form.branch,
+        type: form.type,
+        startTime: form.startTime + ":00", // Send exact local time (e.g. "2026-06-03T09:30:00")
+        endTime: form.endTime + ":00",
 
-    });
-    toast.success("Session created");
-    setOpen(false);
-    nav({ to: "/faculty/sessions/$id", params: { id: s.id } });
+      });
+      toast.success("Session created");
+      setOpen(false);
+      nav({ to: "/faculty/sessions/$id", params: { id: s.id } });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const sorted = [...sessions].sort((a, b) => +new Date(b.startTime) - +new Date(a.startTime));
@@ -193,9 +200,9 @@ function SessionsPage() {
           </motion.div>
 
           <div className="flex justify-end gap-2 pt-1">
-            <button type="button" onClick={() => setOpen(false)} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent">Cancel</button>
-            <button type="submit" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
-              <QrCode className="size-4" /> Generate QR
+            <button type="button" onClick={() => setOpen(false)} disabled={loading} className="rounded-lg border border-border px-3 py-2 text-sm hover:bg-accent disabled:opacity-50">Cancel</button>
+            <button type="submit" disabled={loading} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-3.5 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+              {loading ? <Loader2 className="size-4 animate-spin" /> : <QrCode className="size-4" />} {loading ? "Generating..." : "Generate QR"}
             </button>
           </div>
         </form>

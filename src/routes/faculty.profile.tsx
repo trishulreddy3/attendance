@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Field } from "@/components/common/Field";
 import { BRANCHES, useApp, type Branch } from "@/lib/store";
@@ -19,13 +20,20 @@ function ProfilePage() {
     email: me?.email ?? "",
     branch: (me?.branch ?? "CSE") as Branch,
   });
+  const [loading, setLoading] = useState(false);
 
   if (!me) return null;
 
-  const save = (e: React.FormEvent) => {
+  const save = async (e: React.FormEvent) => {
     e.preventDefault();
-    updateFaculty(me.id, form);
-    toast.success("Profile updatedd");
+    if (loading) return;
+    setLoading(true);
+    try {
+      await updateFaculty(me.id, form);
+      toast.success("Profile updated");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -55,7 +63,10 @@ function ProfilePage() {
             </select>
           </label>
           <div className="md:col-span-2 flex justify-end">
-            <button className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">Save changes</button>
+            <button type="submit" disabled={loading} className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90 disabled:opacity-50">
+              {loading && <Loader2 className="size-4 animate-spin" />}
+              {loading ? "Saving..." : "Save changes"}
+            </button>
           </div>
         </form>
       </motion.div>

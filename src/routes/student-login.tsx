@@ -30,6 +30,7 @@ function StudentLoginPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (busy) return;
     setBusy(true);
 
     const r = await loginStudent(studentId, password);

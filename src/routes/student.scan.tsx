@@ -60,6 +60,7 @@ function ScanPage() {
         if (!r.ok) { setError(r.error ?? "Couldn't mark attendance"); setStage("fail"); return; }
         setStage("success");
         confetti({ particleCount: 80, spread: 70, origin: { y: 0.4 }, colors: ["#6366f1", "#22c55e", "#a5b4fc"] });
+        setTimeout(() => nav({ to: "/student/dashboard" }), 3000);
       }, 400); // reduced delay for snappier feel
     };
 

@@ -220,7 +220,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     },
     createSession: async (s) => {
       const ns = await api.createSession(s);
-      await refreshData();
+      update((cur) => ({ ...cur, sessions: [ns, ...cur.sessions] }));
+      refreshData();
       return ns;
     },
     refreshQr: async (sessionId) => {
