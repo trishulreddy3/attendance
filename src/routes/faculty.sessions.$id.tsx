@@ -2,7 +2,7 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { ArrowLeft, CheckCircle2, RefreshCcw, Users } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { AnimatedCounter } from "@/components/common/AnimatedCounter";
 import { useApp } from "@/lib/store";
 import { fmtTime } from "@/lib/format";
@@ -19,6 +19,7 @@ function LiveSession() {
   const [countdown, setCountdown] = useState(30);
   const [now, setNow] = useState(Date.now());
   const [terminating, setTerminating] = useState(false);
+  const isRefreshing = useRef(false);
 
   useEffect(() => {
     const i = setInterval(() => setNow(Date.now()), 1000);
@@ -88,8 +89,8 @@ function LiveSession() {
               <p className="text-sm text-muted-foreground">{session.subject} · {session.branch}</p>
             </div>
             <div className="text-right">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">Ends in</p>
-              <p className="text-2xl font-semibold tabular-nums tracking-tight">{remaining}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">{isEnded ? "Status" : "Ends in"}</p>
+              <p className="text-2xl font-semibold tabular-nums tracking-tight">{isEnded ? "Ended" : remaining}</p>
             </div>
           </div>
 
@@ -129,7 +130,16 @@ function LiveSession() {
                   {terminating ? "Ending..." : "End Session"}
                 </button>
               )}
-              <button disabled={isEnded} onClick={() => { refreshQr(session.id); setCountdown(30); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent disabled:opacity-50">
+              <button disabled={isEnded || isRefreshing.current} onClick={async () => { 
+                if (isRefreshing.current) return;
+                isRefreshing.current = true;
+                try {
+                  await refreshQr(session.id); 
+                  setCountdown(30);
+                } finally {
+                  setTimeout(() => { isRefreshing.current = false; }, 500); // 500ms debounce
+                }
+              }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent disabled:opacity-50">
                 <RefreshCcw className="size-3.5" /> Refresh now
               </button>
             </div>

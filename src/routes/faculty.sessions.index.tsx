@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Calendar, Clock, Plus, QrCode, Loader2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef } from "react";
 import { toast } from "sonner";
 import { Field } from "@/components/common/Field";
 import { Modal } from "@/components/common/Modal";
@@ -35,6 +35,7 @@ function SessionsPage() {
   const [open, setOpen] = useState(false);
   const [filter, setFilter] = useState<"all" | "active" | "ended">("all");
   const [loading, setLoading] = useState(false);
+  const isSubmitting = useRef(false);
   const now = new Date(); now.setMinutes(0, 0, 0);
   const [form, setForm] = useState({
     name: "",
@@ -58,8 +59,10 @@ function SessionsPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return;
+    if (isSubmitting.current) return;
     if (!form.name || !form.subject) { toast.error("Add a name & subject"); return; }
+    
+    isSubmitting.current = true;
     setLoading(true);
     try {
       const s = await createSession({
@@ -74,7 +77,10 @@ function SessionsPage() {
       toast.success("Session created");
       setOpen(false);
       nav({ to: "/faculty/sessions/$id", params: { id: s.id } });
-    } finally {
+      // Intentionally not setting loading to false here so the button stays disabled while animating/navigating
+    } catch (err: any) {
+      toast.error(err.message || "Failed to create session");
+      isSubmitting.current = false;
       setLoading(false);
     }
   };
