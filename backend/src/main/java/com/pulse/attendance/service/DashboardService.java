@@ -47,7 +47,7 @@ public class DashboardService {
         LocalDateTime endOfDay = startOfDay.plusDays(1);
         
         long presentToday = attendanceRepository.findByMarkedAtBetween(startOfDay, endOfDay).stream()
-                .filter(a -> a.getSession().getFaculty().getId().equals(facultyId))
+                .filter(a -> a.getSession() != null && a.getSession().getFaculty() != null && facultyId.equals(a.getSession().getFaculty().getId()))
                 .map(a -> a.getStudent().getId())
                 .distinct().count();
 
@@ -91,7 +91,7 @@ public class DashboardService {
         }
 
         List<ActivityDTO> recentActivity = attendanceRepository.findAll().stream()
-                .filter(a -> a.getSession().getFaculty().getId().equals(facultyId))
+                .filter(a -> a.getSession() != null && a.getSession().getFaculty() != null && facultyId.equals(a.getSession().getFaculty().getId()))
                 .sorted((a, b) -> b.getMarkedAt().compareTo(a.getMarkedAt()))
                 .limit(6)
                 .map(a -> new ActivityDTO(a.getStudent().getName(), a.getSession().getName(), a.getMarkedAt()))

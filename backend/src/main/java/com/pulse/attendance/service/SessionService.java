@@ -92,7 +92,7 @@ public class SessionService {
     @Transactional
     public SessionDTO updateSession(String facultyId, String sessionId, UpdateSessionReq req) {
         Session session = getSessionEntity(sessionId);
-        if (!session.getFaculty().getId().equals(facultyId)) {
+        if (session.getFaculty() == null || !facultyId.equals(session.getFaculty().getId())) {
             throw new ApiException("Not authorized", HttpStatus.FORBIDDEN);
         }
 
@@ -109,7 +109,7 @@ public class SessionService {
     @Transactional
     public void deleteSession(String facultyId, String sessionId) {
         Session session = getSessionEntity(sessionId);
-        if (!session.getFaculty().getId().equals(facultyId)) {
+        if (session.getFaculty() == null || !facultyId.equals(session.getFaculty().getId())) {
             throw new ApiException("Not authorized", HttpStatus.FORBIDDEN);
         }
         sessionRepository.delete(session);
