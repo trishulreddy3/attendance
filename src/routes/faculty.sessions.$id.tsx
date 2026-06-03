@@ -14,10 +14,11 @@ export const Route = createFileRoute("/faculty/sessions/$id")({
 
 function LiveSession() {
   const { id } = useParams({ from: "/faculty/sessions/$id" });
-  const { sessions, students, refreshQr } = useApp();
+  const { sessions, students, refreshQr, endSession } = useApp();
   const session = sessions.find((s) => s.id === id);
   const [countdown, setCountdown] = useState(30);
   const [now, setNow] = useState(Date.now());
+  const [terminating, setTerminating] = useState(false);
 
   useEffect(() => {
     const i = setInterval(() => setNow(Date.now()), 1000);
@@ -55,6 +56,7 @@ function LiveSession() {
 
   const attendees = [...session.attendees].sort((a, b) => +new Date(b.at) - +new Date(a.at));
   const payload = `pulse://session/${session.id}/${session.qrToken}`;
+  const isEnded = new Date(session.endTime).getTime() <= now;
 
   return (
     <div className="mx-auto max-w-7xl">
@@ -62,13 +64,19 @@ function LiveSession() {
         <Link to="/faculty/sessions" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="size-4" /> All sessions
         </Link>
-        <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
-          <span className="relative flex size-1.5">
-            <span className="absolute inset-0 animate-ping rounded-full bg-success/70" />
-            <span className="relative size-1.5 rounded-full bg-success" />
+        {isEnded ? (
+          <span className="flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            Ended
           </span>
-          Live
-        </span>
+        ) : (
+          <span className="flex items-center gap-1.5 rounded-full bg-success/10 px-2.5 py-1 text-xs font-medium text-success">
+            <span className="relative flex size-1.5">
+              <span className="absolute inset-0 animate-ping rounded-full bg-success/70" />
+              <span className="relative size-1.5 rounded-full bg-success" />
+            </span>
+            Live
+          </span>
+        )}
       </div>
 
       <div className="grid gap-5 lg:grid-cols-5">
@@ -107,9 +115,24 @@ function LiveSession() {
 
           <div className="mt-8 flex items-center justify-between text-xs text-muted-foreground">
             <span className="font-mono truncate">{session.qrToken}</span>
-            <button onClick={() => { refreshQr(session.id); setCountdown(30); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent">
-              <RefreshCcw className="size-3.5" /> Refresh now
-            </button>
+            <div className="flex items-center gap-2">
+              {!isEnded && (
+                <button 
+                  disabled={terminating}
+                  onClick={async () => {
+                    setTerminating(true);
+                    try { await endSession(session.id); } catch (e) { console.error(e); }
+                    setTerminating(false);
+                  }} 
+                  className="inline-flex items-center gap-1 rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-2.5 py-1 hover:bg-destructive/20 disabled:opacity-50"
+                >
+                  {terminating ? "Ending..." : "End Session"}
+                </button>
+              )}
+              <button disabled={isEnded} onClick={() => { refreshQr(session.id); setCountdown(30); }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent disabled:opacity-50">
+                <RefreshCcw className="size-3.5" /> Refresh now
+              </button>
+            </div>
           </div>
         </motion.div>
 

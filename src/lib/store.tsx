@@ -61,6 +61,9 @@ interface Ctx extends AppState {
   addStudent: (s: any) => Promise<{ ok: boolean; error?: string }>;
   updateStudent: (id: string, s: any) => Promise<void>;
   deleteStudent: (id: string) => Promise<void>;
+  deleteSession: (id: string) => Promise<void>;
+  startSession: (id: string) => Promise<void>;
+  endSession: (id: string) => Promise<void>;
   createSession: (s: any) => Promise<Session>;
   refreshQr: (sessionId: string) => Promise<void>;
   markAttendance: (sessionId: string, studentId: string, lat?: number, lng?: number) => Promise<{ ok: boolean; error?: string }>;
@@ -217,6 +220,18 @@ export function AppProvider({ children }: { children: ReactNode }) {
     deleteStudent: async (id) => {
       await api.deleteStudent(id);
       update((cur) => ({ ...cur, students: cur.students.filter((x) => x.id !== id) }));
+    },
+    deleteSession: async (id) => {
+      await api.deleteSession(id);
+      update((cur) => ({ ...cur, sessions: cur.sessions.filter((x) => x.id !== id) }));
+    },
+    startSession: async (id) => {
+      const ns = await api.startSession(id);
+      update((cur) => ({ ...cur, sessions: cur.sessions.map((x) => (x.id === id ? ns : x)) }));
+    },
+    endSession: async (id) => {
+      const ns = await api.endSession(id);
+      update((cur) => ({ ...cur, sessions: cur.sessions.map((x) => (x.id === id ? ns : x)) }));
     },
     createSession: async (s) => {
       const ns = await api.createSession(s);
