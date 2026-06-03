@@ -25,7 +25,7 @@ function ProfilePage() {
   const save = (e: React.FormEvent) => {
     e.preventDefault();
     updateFaculty(me.id, form);
-    toast.success("Profile updated");
+    toast.success("Profile updatedd");
   };
 
   return (
