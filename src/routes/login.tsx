@@ -87,6 +87,8 @@ function LoginPage() {
         </button>
         <p className="text-center text-xs text-muted-foreground">
           Student? <Link to="/student-login" className="text-foreground hover:underline">Sign in here</Link>
+          {" | "}
+          <Link to="/admin-login" className="text-foreground hover:underline">Admin Login</Link>
         </p>
       </motion.form>
     </AuthShell>

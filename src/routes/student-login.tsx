@@ -59,6 +59,8 @@ function StudentLoginPage() {
         </button>
         <p className="text-center text-xs text-muted-foreground">
           Faculty? <Link to="/login" className="text-primary hover:underline">Go to faculty login</Link>
+          {" | "}
+          <Link to="/admin-login" className="text-primary hover:underline">Admin Login</Link>
         </p>
 
       </motion.form>
