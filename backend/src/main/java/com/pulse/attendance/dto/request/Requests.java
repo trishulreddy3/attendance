@@ -7,18 +7,23 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Requests {
-    public record FacultyRegisterReq(
-        @NotBlank String name,
-        @Email @NotBlank String email,
-        @NotBlank String mobile,
-        @NotBlank String password,
-        @NotBlank String branch
+    public record AdminAddFacultyReq(
+            @NotBlank(message = "Name is required") String name,
+            @NotBlank(message = "Email is required") @Email(message = "Invalid email") String email,
+            @NotBlank(message = "Mobile is required") String mobile,
+            @NotBlank(message = "Password is required") String password,
+            @NotBlank(message = "Branch is required") String branch
+    ) {}
+
+    public record AdminResetDeviceReq(
+            @NotBlank(message = "Student ID is required") String studentId
     ) {}
 
     public record LoginReq(
-        @NotBlank String username, // email or studentId
-        @NotBlank String password,
-        @NotBlank String kind // "faculty" or "student"
+            @NotBlank(message = "Username/Email is required") String username,
+            @NotBlank(message = "Password is required") String password,
+            @NotBlank(message = "Kind is required") String kind,
+            String deviceFingerprint
     ) {}
     
     public record ChangePasswordReq(
@@ -64,9 +69,10 @@ public class Requests {
     ) {}
 
     public record MarkAttendanceReq(
-        @NotNull java.lang.String sessionId,
-        @NotBlank java.lang.String qrToken,
-        BigDecimal latitude,
-        BigDecimal longitude
+            @NotBlank(message = "Session ID is required") String sessionId,
+            @NotBlank(message = "QR Token is required") String qrToken,
+            @NotNull(message = "Latitude is required") BigDecimal latitude,
+            @NotNull(message = "Longitude is required") BigDecimal longitude,
+            @NotBlank(message = "Device Fingerprint is required") String deviceFingerprint
     ) {}
 }

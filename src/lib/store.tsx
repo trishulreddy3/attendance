@@ -41,7 +41,8 @@ export interface Session {
 }
 
 interface AuthUser {
-  kind: "faculty" | "student";
+  kind: "faculty" | "student" | "admin";
+  id: string;
   id: string;
 }
 
@@ -54,7 +55,7 @@ interface AppState {
 }
 
 interface Ctx extends AppState {
-  signupFaculty: (f: any) => Promise<{ ok: boolean; error?: string }>;
+  loginAdmin: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   loginFaculty: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   loginStudent: (studentId: string, email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
@@ -90,7 +91,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
 
     const client = new Client({
-      brokerURL: "wss://attendance-dhvi.onrender.com/ws",
+      brokerURL: import.meta.env.DEV ? "ws://localhost:8080/ws" : "wss://attendance-dhvi.onrender.com/ws",
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -133,10 +134,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return;
       }
       const me = await api.getMe();
-      const kind = me.studentId ? "student" : "faculty";
+      let kind = "admin";
+      if (me.studentId) kind = "student";
+      else if (me.branch) kind = "faculty";
       update({ user: { kind, id: me.id } });
 
-      if (kind === "faculty") {
+      if (kind === "admin") {
+        // We don't fetch any global array for admin, let individual components fetch what they need
+      } else if (kind === "faculty") {
         update({ faculties: [me] });
         const [students, sessions] = await Promise.all([
           api.getAllStudents(),
@@ -170,9 +175,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const ctx: Ctx = {
     ...state,
     refreshData,
-    signupFaculty: async (f) => {
+    loginAdmin: async (email, password) => {
       try {
-        const res = await api.registerFaculty(f);
+        const res = await api.login({ username: email, password, kind: "admin" });
         setToken(res.token);
         await refreshData();
         return { ok: true };
@@ -192,7 +197,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     },
     loginStudent: async (studentId, password) => {
       try {
-        const res = await api.login({ username: studentId, password, kind: "student" });
+        const { getDeviceFingerprint } = await import("./device");
+        const deviceFingerprint = await getDeviceFingerprint();
+        const res = await api.login({ username: studentId, password, kind: "student", deviceFingerprint });
         setToken(res.token);
         await refreshData();
         return { ok: true };
@@ -248,7 +255,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     },
     markAttendance: async (sessionId, studentId, qrToken, lat, lng) => {
       try {
-        await api.markAttendance(sessionId, { sessionId, qrToken, latitude: lat, longitude: lng });
+        const { getDeviceFingerprint } = await import("./device");
+        const deviceFingerprint = await getDeviceFingerprint();
+        await api.markAttendance(sessionId, { sessionId, qrToken, latitude: lat, longitude: lng, deviceFingerprint });
         // The websocket should theoretically push this, but let's eagerly update
         update((cur) => ({
           ...cur,

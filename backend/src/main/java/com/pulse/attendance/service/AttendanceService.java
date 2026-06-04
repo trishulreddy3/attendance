@@ -28,6 +28,7 @@ public class AttendanceService {
     private final AttendanceRepository attendanceRepository;
     private final SessionService sessionService;
     private final StudentService studentService;
+    private final DeviceBindingService deviceBindingService;
     private final GeoLocationService geoLocationService;
     private final EntityMapper mapper;
     private final SimpMessagingTemplate messagingTemplate;
@@ -52,6 +53,9 @@ public class AttendanceService {
         if (attendanceRepository.existsBySessionIdAndStudentId(session.getId(), studentId)) {
             throw new ApiException("Attendance already marked", HttpStatus.BAD_REQUEST);
         }
+
+        // Validate Device Binding
+        deviceBindingService.checkDeviceForAttendance(studentId, req.deviceFingerprint());
 
         // 3. Validate QR Token
         boolean isValidCurrent = req.qrToken().equals(session.getCurrentQrToken());

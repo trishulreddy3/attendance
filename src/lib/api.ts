@@ -1,4 +1,4 @@
-const API_BASE = "https://attendance-dhvi.onrender.com/api";
+const API_BASE = import.meta.env.DEV ? "http://localhost:8080/api" : "https://attendance-dhvi.onrender.com/api";
 
 export function getToken() {
   if (typeof window === "undefined") return null;
@@ -39,10 +39,18 @@ async function fetchApi(path: string, options: RequestInit = {}) {
 
 export const api = {
   // Auth
-  registerFaculty: (data: any) => fetchApi("/auth/register/faculty", { method: "POST", body: JSON.stringify(data) }),
   login: (data: any) => fetchApi("/auth/login", { method: "POST", body: JSON.stringify(data) }),
   getMe: () => fetchApi("/auth/me", { method: "GET" }),
   changePassword: (data: any) => fetchApi("/auth/change-password", { method: "PUT", body: JSON.stringify(data) }),
+
+  // Admin
+  getAdminDashboard: () => fetchApi("/admin/dashboard", { method: "GET" }),
+  addFaculty: (data: any) => fetchApi("/admin/faculty", { method: "POST", body: JSON.stringify(data) }),
+  getAllFaculty: () => fetchApi("/admin/faculty", { method: "GET" }),
+  updateFaculty: (id: string, data: any) => fetchApi(`/admin/faculty/${id}`, { method: "PUT", body: JSON.stringify(data) }),
+  deleteFaculty: (id: string) => fetchApi(`/admin/faculty/${id}`, { method: "DELETE" }),
+  getAllStudentsAdmin: () => fetchApi("/admin/students", { method: "GET" }),
+  resetStudentDevice: (id: string) => fetchApi(`/admin/students/${id}/reset-device`, { method: "POST" }),
 
   // Faculty
   getFacultyProfile: () => fetchApi("/faculty/profile", { method: "GET" }),

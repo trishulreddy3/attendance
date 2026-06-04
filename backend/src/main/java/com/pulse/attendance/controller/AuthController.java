@@ -1,11 +1,11 @@
 package com.pulse.attendance.controller;
 
 import com.pulse.attendance.dto.request.Requests.ChangePasswordReq;
-import com.pulse.attendance.dto.request.Requests.FacultyRegisterReq;
 import com.pulse.attendance.dto.request.Requests.LoginReq;
 import com.pulse.attendance.dto.response.Responses.AuthResponse;
 import com.pulse.attendance.dto.response.Responses.MessageResponse;
 import com.pulse.attendance.security.UserDetailsImpl;
+import com.pulse.attendance.service.AdminService;
 import com.pulse.attendance.service.AuthService;
 import com.pulse.attendance.service.FacultyService;
 import com.pulse.attendance.service.StudentService;
@@ -21,13 +21,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+    private final AdminService adminService;
     private final FacultyService facultyService;
     private final StudentService studentService;
-
-    @PostMapping("/register/faculty")
-    public ResponseEntity<AuthResponse> registerFaculty(@Valid @RequestBody FacultyRegisterReq req) {
-        return ResponseEntity.ok(authService.registerFaculty(req));
-    }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginReq req) {
@@ -36,7 +32,9 @@ public class AuthController {
 
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        if ("ROLE_FACULTY".equals(userDetails.getRole())) {
+        if ("ROLE_ADMIN".equals(userDetails.getRole())) {
+            return ResponseEntity.ok(adminService.getAdminProfile(userDetails.getId()));
+        } else if ("ROLE_FACULTY".equals(userDetails.getRole())) {
             return ResponseEntity.ok(facultyService.getFacultyProfile(userDetails.getId()));
         } else {
             return ResponseEntity.ok(studentService.getStudentProfile(userDetails.getId()));
@@ -48,7 +46,9 @@ public class AuthController {
             @Valid @RequestBody ChangePasswordReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         
-        if ("ROLE_FACULTY".equals(userDetails.getRole())) {
+        if ("ROLE_ADMIN".equals(userDetails.getRole())) {
+            // Admin password change if we wanted to implement it, for now just ignore or throw error
+        } else if ("ROLE_FACULTY".equals(userDetails.getRole())) {
             facultyService.changePassword(userDetails.getId(), req);
         } else {
             studentService.changePassword(userDetails.getId(), req);

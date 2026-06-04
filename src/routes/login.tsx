@@ -86,9 +86,6 @@ function LoginPage() {
           {busy ? "Signing in…" : "Sign in"}
         </button>
         <p className="text-center text-xs text-muted-foreground">
-          New here? <Link to="/signup" className="text-primary hover:underline">Create a faculty account</Link>
-        </p>
-        <p className="text-center text-xs text-muted-foreground">
           Student? <Link to="/student-login" className="text-foreground hover:underline">Sign in here</Link>
         </p>
       </motion.form>

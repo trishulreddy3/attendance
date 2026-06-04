@@ -1,7 +1,9 @@
 package com.pulse.attendance.security;
 
+import com.pulse.attendance.entity.Admin;
 import com.pulse.attendance.entity.Faculty;
 import com.pulse.attendance.entity.Student;
+import com.pulse.attendance.repository.AdminRepository;
 import com.pulse.attendance.repository.FacultyRepository;
 import com.pulse.attendance.repository.StudentRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +19,20 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private final AdminRepository adminRepository;
     private final FacultyRepository facultyRepository;
     private final StudentRepository studentRepository;
 
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // First try finding as Faculty (email)
+        // First try finding as Admin
+        Optional<Admin> admin = adminRepository.findByEmail(username);
+        if (admin.isPresent()) {
+            return UserDetailsImpl.build(admin.get());
+        }
+
+        // Then try finding as Faculty (email)
         Optional<Faculty> faculty = facultyRepository.findByEmail(username);
         if (faculty.isPresent()) {
             return UserDetailsImpl.build(faculty.get());

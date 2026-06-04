@@ -1,9 +1,11 @@
 package com.pulse.attendance.mapper;
 
+import com.pulse.attendance.dto.response.Responses.AdminDTO;
 import com.pulse.attendance.dto.response.Responses.AttendanceDTO;
 import com.pulse.attendance.dto.response.Responses.FacultyDTO;
 import com.pulse.attendance.dto.response.Responses.SessionDTO;
 import com.pulse.attendance.dto.response.Responses.StudentDTO;
+import com.pulse.attendance.entity.Admin;
 import com.pulse.attendance.entity.Attendance;
 import com.pulse.attendance.entity.Faculty;
 import com.pulse.attendance.entity.Session;
@@ -17,6 +19,8 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface EntityMapper {
     EntityMapper INSTANCE = Mappers.getMapper(EntityMapper.class);
+
+    AdminDTO toAdminDTO(Admin admin);
 
     FacultyDTO toFacultyDTO(Faculty faculty);
 

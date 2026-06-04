@@ -21,6 +21,7 @@ function Landing() {
   useEffect(() => {
     if (user?.kind === "faculty") nav({ to: "/faculty/dashboard" });
     else if (user?.kind === "student") nav({ to: "/student/dashboard" });
+    else if (user?.kind === "admin") nav({ to: "/admin/dashboard" });
   }, [user, nav]);
 
   return (
@@ -28,10 +29,10 @@ function Landing() {
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <Logo />
         <nav className="flex items-center gap-2 text-sm">
-          <Link to="/student-login" className="rounded-md px-3 py-2 text-muted-foreground hover:text-foreground">Student</Link>
+          <Link to="/student-login" className="rounded-md px-3 py-2 text-muted-foreground hover:text-foreground">Student login</Link>
           <Link to="/login" className="rounded-md px-3 py-2 text-muted-foreground hover:text-foreground">Faculty login</Link>
-          <Link to="/signup" className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3.5 py-2 text-primary-foreground hover:opacity-90">
-            Get started <ArrowRight className="size-3.5" />
+          <Link to="/admin-login" className="inline-flex items-center gap-1.5 rounded-md bg-primary/10 px-3.5 py-2 text-primary hover:bg-primary/20">
+            Admin <ShieldCheck className="size-3.5" />
           </Link>
         </nav>
       </header>
@@ -54,8 +55,8 @@ function Landing() {
             One scan. One second. Pulse handles the rest — for every period, every classroom, every campus.
           </p>
           <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
-            <Link to="/signup" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90">
-              Start as Faculty <ArrowRight className="size-4" />
+            <Link to="/login" className="inline-flex items-center gap-1.5 rounded-lg bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground hover:opacity-90">
+              Faculty Login <ArrowRight className="size-4" />
             </Link>
             <Link to="/student-login" className="rounded-lg border border-border bg-card px-5 py-2.5 text-sm font-medium hover:bg-accent">
               I'm a Student

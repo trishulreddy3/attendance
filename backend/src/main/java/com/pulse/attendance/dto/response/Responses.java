@@ -10,6 +10,8 @@ public class Responses {
     
     public record MessageResponse(String message) {}
     
+    public record AdminDTO(String id, String name, String email) {}
+    
     public record FacultyDTO(String id, String name, String email, String mobile, String branch) {}
     
     public record StudentDTO(String id, String studentId, String name, String email, String mobile, String branch, String createdBy) {}
@@ -44,6 +46,22 @@ public class Responses {
     public record ChartData(String label, int value) {}
     
     public record ActivityDTO(String studentName, String sessionName, LocalDateTime at) {}
+
+    public record AdminDashboardDTO(
+            long totalFaculty,
+            long totalStudents,
+            long totalSessions,
+            long totalAttendance,
+            List<FacultyDTO> facultyList
+    ) {}
+
+    public record DeviceBindingDTO(
+            String studentId,
+            String studentName,
+            String deviceFingerprint,
+            LocalDateTime boundAt,
+            String status
+    ) {}
     
     // Reports
     public record ReportDTO(List<BranchStat> branchStats, List<SubjectStat> subjectStats, List<SessionDTO> sessionLog) {}

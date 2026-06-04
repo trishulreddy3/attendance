@@ -1,127 +1,630 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Registration Form</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trishul Reddy Gannaram</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        .container {
-            width: 350px;
-            margin: 50px auto;
-            padding: 20px;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
+  :root {
+    --bg: #111110;
+    --panel: #1a1a18;
+    --panel2: #212120;
+    --border: rgba(255,255,255,0.07);
+    --border-hover: rgba(255,255,255,0.14);
+    --text: #f0ede8;
+    --muted: #8a8880;
+    --accent: #c8f060;
+    --accent2: #60d4c8;
+    --accent3: #e8946a;
+  }
 
-        h2 {
-            text-align: center;
-        }
+  html { scroll-behavior: smooth; }
 
-        label {
-            display: block;
-            margin-top: 10px;
-        }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
 
-        input {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 20%, rgba(200,240,96,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(96,212,200,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        .error {
-            color: red;
-            font-size: 14px;
-            margin-top: 5px;
-        }
+  .layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    min-height: 100vh;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+  }
 
-        button {
-            width: 100%;
-            padding: 10px;
-            margin-top: 15px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
+  /* SIDEBAR */
+  .sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 3rem 2rem;
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    overflow-y: auto;
+  }
 
-        button:hover {
-            background-color: #45a049;
-        }
-    </style>
+  .sidebar-top { flex: 1; }
+
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(200,240,96,0.08);
+    border: 1px solid rgba(200,240,96,0.2);
+    padding: 5px 12px;
+    border-radius: 20px;
+    margin-bottom: 1.5rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .tag-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .name {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.6rem;
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--text);
+    margin-bottom: 1.25rem;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .name span { color: var(--accent); }
+
+  .bio {
+    font-size: 13.5px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    animation: fadeUp 0.6s 0.2s ease both;
+  }
+
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-bottom: 2.5rem;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .skill {
+    font-size: 11px;
+    padding: 4px 11px;
+    border-radius: 4px;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'DM Sans', sans-serif;
+    letter-spacing: 0.02em;
+  }
+
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 0 0 1.5rem;
+  }
+
+  .s-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .icon-row {
+    display: flex;
+    gap: 8px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  .icon-link {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 15px;
+    transition: all 0.2s;
+  }
+
+  .icon-link:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,240,96,0.06);
+    transform: translateY(-2px);
+  }
+
+  .sidebar-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+
+  .footer-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+
+  .trophy { font-size: 14px; }
+
+  /* MAIN */
+  .main {
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+  }
+
+  /* Section */
+  .section {}
+  .sec-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.25rem;
+  }
+  .sec-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .sec-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Projects */
+  .proj-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .proj-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    cursor: default;
+    transition: all 0.25s;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .proj-card[href] { cursor: pointer; }
+
+  .proj-card:hover {
+    border-color: var(--border-hover);
+    background: var(--panel2);
+    transform: translateX(4px);
+  }
+
+  .proj-card[href]:hover .proj-arrow { opacity: 1; transform: translate(2px, -2px); }
+
+  .proj-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--muted);
+    min-width: 22px;
+  }
+
+  .proj-body { flex: 1; min-width: 0; }
+  .proj-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .proj-desc {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .proj-tags { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
+  .ptag {
+    font-size: 10px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .ptag-live { background: rgba(200,240,96,0.1); color: var(--accent); border: 1px solid rgba(200,240,96,0.25); }
+  .ptag-ai { background: rgba(96,212,200,0.1); color: var(--accent2); border: 1px solid rgba(96,212,200,0.25); }
+  .ptag-agri { background: rgba(232,148,106,0.1); color: var(--accent3); border: 1px solid rgba(232,148,106,0.25); }
+  .ptag-edu { background: rgba(200,240,96,0.06); color: #a8c060; border: 1px solid rgba(200,240,96,0.12); }
+
+  .proj-arrow {
+    font-size: 16px;
+    color: var(--muted);
+    opacity: 0;
+    transition: all 0.2s;
+    flex-shrink: 0;
+  }
+
+  /* Profiles grid */
+  .profiles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .prof-card {
+    padding: 16px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.25s;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .prof-card:hover {
+    border-color: var(--border-hover);
+    background: var(--panel2);
+    transform: translateY(-3px);
+  }
+
+  .prof-icon-wrap {
+    width: 38px; height: 38px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .pi-gh { background: rgba(255,255,255,0.06); color: #e0ddd8; }
+  .pi-li { background: rgba(10,102,194,0.15); color: #5b9fd4; }
+  .pi-lc { background: rgba(255,161,22,0.12); color: #e8a040; }
+  .pi-hr { background: rgba(32,204,107,0.12); color: #3dcf78; }
+  .pi-pf { background: rgba(200,240,96,0.1); color: var(--accent); }
+
+  .prof-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+  }
+  .prof-handle { font-size: 11px; color: var(--muted); margin-top: 1px; }
+
+  /* Certifications */
+  .cert-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .cert-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 14px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    transition: all 0.2s;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .cert-pill:hover {
+    border-color: var(--border-hover);
+    color: var(--text);
+  }
+
+  .cert-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* stagger children */
+  .proj-card:nth-child(1){animation-delay:0.05s}
+  .proj-card:nth-child(2){animation-delay:0.1s}
+  .proj-card:nth-child(3){animation-delay:0.15s}
+  .proj-card:nth-child(4){animation-delay:0.2s}
+  .proj-card:nth-child(5){animation-delay:0.25s}
+  .proj-card:nth-child(6){animation-delay:0.3s}
+  .proj-card:nth-child(7){animation-delay:0.35s}
+  .prof-card:nth-child(1){animation-delay:0.05s}
+  .prof-card:nth-child(2){animation-delay:0.1s}
+  .prof-card:nth-child(3){animation-delay:0.15s}
+  .prof-card:nth-child(4){animation-delay:0.2s}
+  .prof-card:nth-child(5){animation-delay:0.25s}
+  .cert-pill:nth-child(1){animation-delay:0.05s}
+  .cert-pill:nth-child(2){animation-delay:0.1s}
+  .cert-pill:nth-child(3){animation-delay:0.15s}
+  .cert-pill:nth-child(4){animation-delay:0.2s}
+  .cert-pill:nth-child(5){animation-delay:0.25s}
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    .layout { grid-template-columns: 1fr; }
+    .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--border); }
+    .profiles-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Registration Form</h2>
+<div class="layout">
 
-    <form id="registrationForm">
-        <label for="name">Full Name</label>
-        <input type="text" id="name">
-        
-        <label for="email">Email</label>
-        <input type="text" id="email">
-        
-        <label for="password">Password</label>
-        <input type="password" id="password">
-        
-        <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="tag"><span class="tag-dot"></span> Available for work</div>
+      <h1 class="name">Trishul<br><span>Reddy.</span></h1>
+      <p class="bio">Computer Science undergraduate specialising in backend engineering and full-stack development. Pursuing B.Tech in AI&nbsp;&amp;&nbsp;ML at Vidya Jyothi Institute of Technology, Hyderabad.</p>
+      <div class="skills">
+        <span class="skill">Spring Boot</span>
+        <span class="skill">REST APIs</span>
+        <span class="skill">React</span>
+        <span class="skill">TypeScript</span>
+        <span class="skill">Python</span>
+        <span class="skill">WebSockets</span>
+        <span class="skill">JWT Auth</span>
+        <span class="skill">MySQL</span>
+      </div>
+      <div class="divider"></div>
+      <p class="s-label">Find me on</p>
+      <div class="icon-row">
+        <a class="icon-link" href="https://www.linkedin.com/in/trishulreddy/" target="_blank" title="LinkedIn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <a class="icon-link" href="https://github.com/trishulreddy3" target="_blank" title="GitHub">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+        </a>
+        <a class="icon-link" href="https://trishulreddy.netlify.app" target="_blank" title="Portfolio">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </a>
+        <a class="icon-link" href="https://leetcode.com/u/trishulreddy3/" target="_blank" title="LeetCode">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+        </a>
+        <a class="icon-link" href="https://www.hackerrank.com/profile/garena1144q" target="_blank" title="HackerRank">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <div class="footer-badge">
+        <span class="trophy">🏆</span>
+        <span>Smart India Hackathon Finalist</span>
+      </div>
+    </div>
+  </aside>
 
-        <div id="errorMessage" class="error"></div>
+  <!-- MAIN -->
+  <main class="main">
 
-        <button type="submit">Register</button>
-    </form>
+    <!-- Projects -->
+    <section class="section">
+      <div class="sec-header">
+        <span class="sec-title">Projects</span>
+        <div class="sec-line"></div>
+      </div>
+      <div class="proj-list">
+
+        <a class="proj-card" href="https://attendance-rho-ruby.vercel.app/" target="_blank">
+          <span class="proj-num">01</span>
+          <div class="proj-body">
+            <p class="proj-name">Pulse – College Attendance System</p>
+            <p class="proj-desc">QR-based attendance · WebSockets (STOMP) · JWT · Spring Boot · Vercel</p>
+          </div>
+          <div class="proj-tags"><span class="ptag ptag-live">Live</span></div>
+          <span class="proj-arrow">↗</span>
+        </a>
+
+        <a class="proj-card" href="https://grievancehub.netlify.app/" target="_blank">
+          <span class="proj-num">02</span>
+          <div class="proj-body">
+            <p class="proj-name">Grievance Redressal System</p>
+            <p class="proj-desc">Citizen platform for civic complaints · SDG 16 · React · Netlify</p>
+          </div>
+          <div class="proj-tags"><span class="ptag ptag-live">Live</span></div>
+          <span class="proj-arrow">↗</span>
+        </a>
+
+        <a class="proj-card" href="https://update-worker-name-to-confessit-confessit.gannaramtrishulreddy.workers.dev/" target="_blank">
+          <span class="proj-num">03</span>
+          <div class="proj-body">
+            <p class="proj-name">Campus Confessions</p>
+            <p class="proj-desc">Anonymous campus social platform · Cloudflare Workers · moderation-friendly</p>
+          </div>
+          <div class="proj-tags"><span class="ptag ptag-live">Live</span></div>
+          <span class="proj-arrow">↗</span>
+        </a>
+
+        <div class="proj-card">
+          <span class="proj-num">04</span>
+          <div class="proj-body">
+            <p class="proj-name">Face Grouping System</p>
+            <p class="proj-desc">Auto-cluster faces from photo collections · DeepFace · DBSCAN · Python</p>
+          </div>
+          <div class="proj-tags"><span class="ptag ptag-ai">AI / ML</span></div>
+        </div>
+
+        <div class="proj-card">
+          <span class="proj-num">05</span>
+          <div class="proj-body">
+            <p class="proj-name">Edu Papers</p>
+            <p class="proj-desc">Upload, search & download previous question papers · subject & college filters</p>
+          </div>
+          <div class="proj-tags"><span class="ptag ptag-edu">Ed-Tech</span></div>
+        </div>
+
+        <div class="proj-card">
+          <span class="proj-num">06</span>
+          <div class="proj-body">
+            <p class="proj-name">Farmer-Buyer App</p>
+            <p class="proj-desc">Direct crop trading · eliminates middlemen · real-time data management</p>
+          </div>
+          <div class="proj-tags"><span class="ptag ptag-agri">AgriTech</span></div>
+        </div>
+
+        <div class="proj-card">
+          <span class="proj-num">07</span>
+          <div class="proj-body">
+            <p class="proj-name">College Complaint Management</p>
+            <p class="proj-desc">Student complaint tracking · admin dashboards · categorisation & auth</p>
+          </div>
+          <div class="proj-tags"><span class="ptag ptag-edu">Admin</span></div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Coding Profiles -->
+    <section class="section">
+      <div class="sec-header">
+        <span class="sec-title">Coding Profiles &amp; Links</span>
+        <div class="sec-line"></div>
+      </div>
+      <div class="profiles-grid">
+
+        <a class="prof-card" href="https://github.com/trishulreddy3" target="_blank">
+          <div class="prof-icon-wrap pi-gh">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+          </div>
+          <div>
+            <p class="prof-name">GitHub</p>
+            <p class="prof-handle">trishulreddy3</p>
+          </div>
+        </a>
+
+        <a class="prof-card" href="https://www.linkedin.com/in/trishulreddy/" target="_blank">
+          <div class="prof-icon-wrap pi-li">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+          </div>
+          <div>
+            <p class="prof-name">LinkedIn</p>
+            <p class="prof-handle">trishulreddy</p>
+          </div>
+        </a>
+
+        <a class="prof-card" href="https://leetcode.com/u/trishulreddy3/" target="_blank">
+          <div class="prof-icon-wrap pi-lc">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div>
+            <p class="prof-name">LeetCode</p>
+            <p class="prof-handle">trishulreddy3</p>
+          </div>
+        </a>
+
+        <a class="prof-card" href="https://www.hackerrank.com/profile/garena1144q" target="_blank">
+          <div class="prof-icon-wrap pi-hr">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
+          </div>
+          <div>
+            <p class="prof-name">HackerRank</p>
+            <p class="prof-handle">garena1144q</p>
+          </div>
+        </a>
+
+        <a class="prof-card" href="https://trishulreddy.netlify.app" target="_blank" style="grid-column: span 2;">
+          <div class="prof-icon-wrap pi-pf">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          </div>
+          <div>
+            <p class="prof-name">Portfolio</p>
+            <p class="prof-handle">trishulreddy.netlify.app</p>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Certifications -->
+    <section class="section">
+      <div class="sec-header">
+        <span class="sec-title">Certifications</span>
+        <div class="sec-line"></div>
+      </div>
+      <div class="cert-grid">
+        <div class="cert-pill"><span class="cert-dot"></span>DBMS</div>
+        <div class="cert-pill"><span class="cert-dot"></span>OOPs through Java</div>
+        <div class="cert-pill"><span class="cert-dot"></span>Problem Solving using C</div>
+        <div class="cert-pill"><span class="cert-dot"></span>Python – CodeTantra</div>
+        <div class="cert-pill"><span class="cert-dot"></span>AIML Internship</div>
+      </div>
+    </section>
+
+  </main>
 </div>
-
-<script>
-document.getElementById("registrationForm").addEventListener("submit", function(event) {
-    event.preventDefault();
-
-    let name = document.getElementById("name").value.trim();
-    let email = document.getElementById("email").value.trim();
-    let password = document.getElementById("password").value;
-    let confirmPassword = document.getElementById("confirmPassword").value;
-    let errorMessage = document.getElementById("errorMessage");
-
-    errorMessage.textContent = "";
-
-    // Name validation
-    if (name === "") {
-        errorMessage.textContent = "Full Name is required.";
-        return;
-    }
-
-    // Email validation
-    let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email)) {
-        errorMessage.textContent = "Please enter a valid email address.";
-        return;
-    }
-
-    // Password length validation
-    if (password.length < 6) {
-        errorMessage.textContent = "Password must be at least 6 characters long.";
-        return;
-    }
-
-    // Password match validation
-    if (password !== confirmPassword) {
-        errorMessage.textContent = "Passwords do not match.";
-        return;
-    }
-
-    alert("Registration Successful!");
-    document.getElementById("registrationForm").reset();
-});
-</script>
 
 </body>
 </html>

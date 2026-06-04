@@ -1,5 +1,6 @@
 package com.pulse.attendance.security;
 
+import com.pulse.attendance.entity.Admin;
 import com.pulse.attendance.entity.Faculty;
 import com.pulse.attendance.entity.Student;
 import lombok.AllArgsConstructor;
@@ -41,6 +42,17 @@ public class UserDetailsImpl implements UserDetails {
                 student.getPassword(),
                 "ROLE_STUDENT",
                 List.of(new SimpleGrantedAuthority("ROLE_STUDENT"))
+        );
+    }
+
+    public static UserDetailsImpl build(Admin admin) {
+        return new UserDetailsImpl(
+                admin.getId(),
+                admin.getEmail(), // username is email
+                admin.getEmail(),
+                admin.getPassword(),
+                "ROLE_ADMIN",
+                List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
         );
     }
 
