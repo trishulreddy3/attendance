@@ -23,7 +23,9 @@ function AnimatedStatCard({ title, value, icon, delay, trend, description }: any
       className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/20 group"
     >
       <div className="absolute -right-6 -top-6 text-primary/5 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-12">
-        {icon}
+        <div className="scale-75 opacity-70">
+          {icon}
+        </div>
       </div>
       <div className="flex items-center gap-4">
         <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -75,16 +77,8 @@ function AdminDashboard() {
     );
   }
 
-  // Generate mock chart data based on real stats
-  const activityData = [
-    { name: "Mon", attendance: Math.floor(data.totalAttendance * 0.1) },
-    { name: "Tue", attendance: Math.floor(data.totalAttendance * 0.15) },
-    { name: "Wed", attendance: Math.floor(data.totalAttendance * 0.12) },
-    { name: "Thu", attendance: Math.floor(data.totalAttendance * 0.2) },
-    { name: "Fri", attendance: Math.floor(data.totalAttendance * 0.18) },
-    { name: "Sat", attendance: Math.floor(data.totalAttendance * 0.05) },
-    { name: "Sun", attendance: Math.floor(data.totalAttendance * 0.02) },
-  ];
+  // We don't need mock data since we get it from backend!
+  const activityData = data.activityData || [];
 
   // Group faculty by branch for pie chart
   const branchCounts = data.facultyList.reduce((acc: any, f: any) => {
@@ -119,7 +113,6 @@ function AdminDashboard() {
           value={data.totalFaculty} 
           icon={<Users className="size-full" />} 
           delay={0.1}
-          trend="+2 this week"
           description="Active teaching staff accounts"
         />
         <AnimatedStatCard 
@@ -127,7 +120,6 @@ function AdminDashboard() {
           value={data.totalStudents} 
           icon={<GraduationCap className="size-full" />} 
           delay={0.2}
-          trend="+15 this week"
           description="Registered student devices"
         />
         <AnimatedStatCard 
@@ -135,7 +127,6 @@ function AdminDashboard() {
           value={data.totalSessions} 
           icon={<Radio className="size-full" />} 
           delay={0.3}
-          trend="Live now"
           description="Total attendance sessions created"
         />
         <AnimatedStatCard 
@@ -143,7 +134,6 @@ function AdminDashboard() {
           value={data.totalAttendance} 
           icon={<CheckCircle2 className="size-full" />} 
           delay={0.4}
-          trend="+1.2k today"
           description="Successful attendance marks recorded"
         />
       </div>
@@ -163,20 +153,20 @@ function AdminDashboard() {
                 <Activity className="size-5 text-primary" />
                 Weekly Attendance Activity
               </h2>
-              <p className="text-xs text-muted-foreground mt-1">Number of attendances marked per day (Simulated)</p>
+              <p className="text-xs text-muted-foreground mt-1">Number of attendances marked per day (Last 7 Days)</p>
             </div>
           </div>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={activityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10" />
-                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} className="text-muted-foreground" />
+                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} className="text-muted-foreground" />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} className="text-muted-foreground" />
                 <RechartsTooltip 
                   cursor={{ fill: 'rgba(var(--primary), 0.1)' }}
                   contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }}
                 />
-                <Bar dataKey="attendance" fill="var(--primary)" radius={[4, 4, 0, 0]} maxBarSize={50} />
+                <Bar dataKey="value" fill="var(--primary)" radius={[4, 4, 0, 0]} maxBarSize={50} />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -52,7 +52,8 @@ public class Responses {
             long totalStudents,
             long totalSessions,
             long totalAttendance,
-            List<FacultyDTO> facultyList
+            List<FacultyDTO> facultyList,
+            List<ChartData> activityData
     ) {}
 
     public record DeviceBindingDTO(

@@ -24,6 +24,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.TextStyle;
+import java.util.Locale;
+import com.pulse.attendance.dto.response.Responses.ChartData;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +58,22 @@ public class AdminService {
                 .map(mapper::toFacultyDTO)
                 .collect(Collectors.toList());
 
-        return new AdminDashboardDTO(totalFaculty, totalStudents, totalSessions, totalAttendance, facultyList);
+        List<ChartData> activityData = new java.util.ArrayList<>();
+        LocalDateTime endOfToday = LocalDate.now().atTime(23, 59, 59);
+        LocalDateTime startOf7DaysAgo = LocalDate.now().minusDays(6).atStartOfDay();
+        
+        List<com.pulse.attendance.entity.Attendance> recentAttendances = attendanceRepository.findByMarkedAtBetween(startOf7DaysAgo, endOfToday);
+        
+        for (int i = 6; i >= 0; i--) {
+            LocalDate d = LocalDate.now().minusDays(i);
+            String dayName = d.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.ENGLISH);
+            long count = recentAttendances.stream()
+                    .filter(a -> a.getMarkedAt() != null && a.getMarkedAt().toLocalDate().equals(d))
+                    .count();
+            activityData.add(new ChartData(dayName, (int) count));
+        }
+
+        return new AdminDashboardDTO(totalFaculty, totalStudents, totalSessions, totalAttendance, facultyList, activityData);
     }
 
     @Transactional

@@ -24,10 +24,11 @@ export function AppShell({
 }) {
   const loc = useLocation();
   const nav2 = useNavigate();
-  const { logout, currentFaculty, currentStudent } = useApp();
   const { theme, toggle } = useTheme();
   const [open, setOpen] = useState(false);
+  const { logout, currentFaculty, currentStudent, user } = useApp();
   const me = currentFaculty() ?? currentStudent();
+  const isAdmin = user?.kind === "admin";
 
   const Sidebar = (
     <aside className="flex h-full w-64 flex-col border-r border-sidebar-border bg-sidebar">
@@ -65,11 +66,11 @@ export function AppShell({
       <div className="border-t border-sidebar-border p-3">
         <div className="flex items-center gap-3 rounded-lg px-2 py-2">
           <div className="grid size-8 place-items-center rounded-full bg-primary/15 text-primary text-xs font-semibold">
-            {me?.name?.[0] ?? "U"}
+            {isAdmin ? "A" : (me?.name?.[0] ?? "U")}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{me?.name ?? "User"}</p>
-            <p className="truncate text-xs text-muted-foreground">{me?.email}</p>
+            <p className="truncate text-sm font-medium">{isAdmin ? "Administrator" : (me?.name ?? "User")}</p>
+            <p className="truncate text-xs text-muted-foreground">{isAdmin ? "admin@system" : me?.email}</p>
           </div>
           <button
             onClick={() => {
