@@ -25,6 +25,9 @@ public interface EntityMapper {
     FacultyDTO toFacultyDTO(Faculty faculty);
 
     @Mapping(source = "createdBy.id", target = "createdBy")
+    @Mapping(source = "rollNumber", target = "rollNumber")
+    @Mapping(source = "batchId", target = "batchId")
+    @Mapping(source = "batchName", target = "batchName")
     StudentDTO toStudentDTO(Student student);
     List<StudentDTO> toStudentDTOs(List<Student> students);
 

@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { LayoutDashboard, Users, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Users, GraduationCap, BookOpen } from "lucide-react";
 import { useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useApp } from "@/lib/store";
@@ -12,13 +12,16 @@ const NAV = [
   { to: "/admin/dashboard", label: "Dashboard", icon: <LayoutDashboard /> },
   { to: "/admin/faculty", label: "Faculty", icon: <Users /> },
   { to: "/admin/students", label: "Students", icon: <GraduationCap /> },
+  { to: "/admin/batches", label: "Batches", icon: <BookOpen /> },
 ];
 
 const TITLES: Record<string, string> = {
   "/admin/dashboard": "Admin Dashboard",
   "/admin/faculty": "Manage Faculty",
   "/admin/students": "Manage Students",
+  "/admin/batches": "Batch Management",
 };
+
 
 function AdminLayout() {
   const { user, loading } = useApp();

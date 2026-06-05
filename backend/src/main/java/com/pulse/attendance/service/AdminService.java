@@ -13,6 +13,7 @@ import com.pulse.attendance.exception.ApiException;
 import com.pulse.attendance.mapper.EntityMapper;
 import com.pulse.attendance.repository.AdminRepository;
 import com.pulse.attendance.repository.AttendanceRepository;
+import com.pulse.attendance.repository.BatchRepository;
 import com.pulse.attendance.repository.FacultyRepository;
 import com.pulse.attendance.repository.SessionRepository;
 import com.pulse.attendance.repository.StudentRepository;
@@ -40,6 +41,7 @@ public class AdminService {
     private final SessionRepository sessionRepository;
     private final AttendanceRepository attendanceRepository;
     private final DeviceBindingService deviceBindingService;
+    private final BatchRepository batchRepository;
     private final PasswordEncoder passwordEncoder;
     private final EntityMapper mapper;
 
@@ -54,6 +56,7 @@ public class AdminService {
         long totalStudents = studentRepository.count();
         long totalSessions = sessionRepository.count();
         long totalAttendance = attendanceRepository.count();
+        long totalBatches = batchRepository.count();
         List<FacultyDTO> facultyList = facultyRepository.findAll().stream()
                 .map(mapper::toFacultyDTO)
                 .collect(Collectors.toList());
@@ -73,7 +76,7 @@ public class AdminService {
             activityData.add(new ChartData(dayName, (int) count));
         }
 
-        return new AdminDashboardDTO(totalFaculty, totalStudents, totalSessions, totalAttendance, facultyList, activityData);
+        return new AdminDashboardDTO(totalFaculty, totalStudents, totalSessions, totalAttendance, totalBatches, facultyList, activityData);
     }
 
     @Transactional

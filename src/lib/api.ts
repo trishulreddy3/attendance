@@ -13,28 +13,27 @@ export function setToken(token: string | null) {
 
 async function fetchApi(path: string, options: RequestInit = {}) {
   const token = getToken();
-  const headers: HeadersInit = {
-    "Content-Type": "application/json",
-    ...options.headers,
+  const isFormData = options.body instanceof FormData;
+  const headers: Record<string, string> = {
+    ...(!isFormData ? { "Content-Type": "application/json" } : {}),
+    ...(options.headers as Record<string, string>),
   };
-  
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
+  if (token) headers["Authorization"] = `Bearer ${token}`;
 
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers,
-  });
-
+  const res = await fetch(`${API_BASE}${path}`, { ...options, headers });
   const isJson = res.headers.get("content-type")?.includes("application/json");
   const data = isJson ? await res.json() : await res.text();
-
-  if (!res.ok) {
-    throw new Error((data && data.error) || data.message || res.statusText);
-  }
-
+  if (!res.ok) throw new Error((data && data.error) || data.message || res.statusText);
   return data;
+}
+
+async function fetchBlob(path: string): Promise<Blob> {
+  const token = getToken();
+  const res = await fetch(`${API_BASE}${path}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!res.ok) throw new Error("Download failed: " + res.statusText);
+  return res.blob();
 }
 
 export const api = {
@@ -52,11 +51,30 @@ export const api = {
   getAllStudentsAdmin: () => fetchApi("/admin/students", { method: "GET" }),
   resetStudentDevice: (id: string) => fetchApi(`/admin/students/${id}/reset-device`, { method: "POST" }),
 
+  // Admin — Batch Module
+  getAllBatches: () => fetchApi("/admin/batch", { method: "GET" }),
+  getBatch: (id: string) => fetchApi(`/admin/batch/${id}`, { method: "GET" }),
+  createBatch: (formData: FormData) => fetchApi("/admin/batch", { method: "POST", body: formData }),
+  getBatchStudents: (id: string) => fetchApi(`/admin/batch/${id}/students`, { method: "GET" }),
+  getAdminBatchAttendance: (id: string) => fetchApi(`/admin/batch/${id}/attendance`, { method: "GET" }),
+  downloadAttendanceReport: (id: string) => fetchBlob(`/admin/batch/${id}/report/download`),
+  downloadBatchTemplate: () => fetchBlob("/admin/batch/template"),
+  deleteBatch: (id: string) => fetchApi(`/admin/batch/${id}`, { method: "DELETE" }),
+
   // Faculty
   getFacultyProfile: () => fetchApi("/faculty/profile", { method: "GET" }),
   updateFacultyProfile: (data: any) => fetchApi("/faculty/profile", { method: "PUT", body: JSON.stringify(data) }),
   getFacultyDashboard: () => fetchApi("/faculty/dashboard", { method: "GET" }),
   getFacultyReports: () => fetchApi("/faculty/reports", { method: "GET" }),
+
+  // Faculty — Batch Module
+  getFacultyBatches: () => fetchApi("/faculty/batches", { method: "GET" }),
+  getFacultyBatch: (id: string) => fetchApi(`/faculty/batches/${id}`, { method: "GET" }),
+  getFacultyBatchStudents: (id: string) => fetchApi(`/faculty/batches/${id}/students`, { method: "GET" }),
+  getFacultyBatchAttendance: (id: string) => fetchApi(`/faculty/batches/${id}/attendance`, { method: "GET" }),
+  markAttendance: (batchId: string, data: any) => fetchApi(`/faculty/batches/${batchId}/attendance`, { method: "PUT", body: JSON.stringify(data) }),
+  bulkMarkAttendance: (batchId: string, data: any) => fetchApi(`/faculty/batches/${batchId}/attendance/bulk`, { method: "PUT", body: JSON.stringify(data) }),
+  downloadFacultyBatchReport: (id: string) => fetchBlob(`/faculty/batches/${id}/report/download`),
 
   // Students
   createStudent: (data: any) => fetchApi("/students", { method: "POST", body: JSON.stringify(data) }),
@@ -79,6 +97,6 @@ export const api = {
   endSession: (id: string) => fetchApi(`/sessions/${id}/end`, { method: "POST" }),
   getActiveSessions: (branch: string) => fetchApi(`/sessions/active/${branch}`, { method: "GET" }),
   getSessionAttendance: (id: string) => fetchApi(`/sessions/${id}/attendance`, { method: "GET" }),
-  markAttendance: (id: string, data: any) => fetchApi(`/sessions/${id}/attendance`, { method: "POST", body: JSON.stringify(data) }),
+  markQrAttendance: (id: string, data: any) => fetchApi(`/sessions/${id}/attendance`, { method: "POST", body: JSON.stringify(data) }),
   refreshQr: (id: string) => fetchApi(`/sessions/${id}/qr/refresh`, { method: "POST" }),
 };

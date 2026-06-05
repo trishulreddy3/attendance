@@ -24,11 +24,15 @@ import { Route as FacultyStudentsRouteImport } from './routes/faculty.students'
 import { Route as FacultyReportsRouteImport } from './routes/faculty.reports'
 import { Route as FacultyProfileRouteImport } from './routes/faculty.profile'
 import { Route as FacultyDashboardRouteImport } from './routes/faculty.dashboard'
+import { Route as FacultyBatchesRouteImport } from './routes/faculty.batches'
 import { Route as AdminStudentsRouteImport } from './routes/admin.students'
 import { Route as AdminFacultyRouteImport } from './routes/admin.faculty'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as AdminBatchesRouteImport } from './routes/admin.batches'
 import { Route as FacultySessionsIndexRouteImport } from './routes/faculty.sessions.index'
 import { Route as FacultySessionsIdRouteImport } from './routes/faculty.sessions.$id'
+import { Route as FacultyBatchesBatchIdRouteImport } from './routes/faculty.batches.$batchId'
+import { Route as AdminBatchesIdRouteImport } from './routes/admin.batches.$id'
 
 const StudentLoginRoute = StudentLoginRouteImport.update({
   id: '/student-login',
@@ -105,6 +109,11 @@ const FacultyDashboardRoute = FacultyDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => FacultyRoute,
 } as any)
+const FacultyBatchesRoute = FacultyBatchesRouteImport.update({
+  id: '/batches',
+  path: '/batches',
+  getParentRoute: () => FacultyRoute,
+} as any)
 const AdminStudentsRoute = AdminStudentsRouteImport.update({
   id: '/students',
   path: '/students',
@@ -120,6 +129,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/dashboard',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBatchesRoute = AdminBatchesRouteImport.update({
+  id: '/batches',
+  path: '/batches',
+  getParentRoute: () => AdminRoute,
+} as any)
 const FacultySessionsIndexRoute = FacultySessionsIndexRouteImport.update({
   id: '/sessions/',
   path: '/sessions/',
@@ -130,6 +144,16 @@ const FacultySessionsIdRoute = FacultySessionsIdRouteImport.update({
   path: '/sessions/$id',
   getParentRoute: () => FacultyRoute,
 } as any)
+const FacultyBatchesBatchIdRoute = FacultyBatchesBatchIdRouteImport.update({
+  id: '/$batchId',
+  path: '/$batchId',
+  getParentRoute: () => FacultyBatchesRoute,
+} as any)
+const AdminBatchesIdRoute = AdminBatchesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AdminBatchesRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -139,9 +163,11 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/student': typeof StudentRouteWithChildren
   '/student-login': typeof StudentLoginRoute
+  '/admin/batches': typeof AdminBatchesRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/faculty': typeof AdminFacultyRoute
   '/admin/students': typeof AdminStudentsRoute
+  '/faculty/batches': typeof FacultyBatchesRouteWithChildren
   '/faculty/dashboard': typeof FacultyDashboardRoute
   '/faculty/profile': typeof FacultyProfileRoute
   '/faculty/reports': typeof FacultyReportsRoute
@@ -150,6 +176,8 @@ export interface FileRoutesByFullPath {
   '/student/history': typeof StudentHistoryRoute
   '/student/profile': typeof StudentProfileRoute
   '/student/scan': typeof StudentScanRoute
+  '/admin/batches/$id': typeof AdminBatchesIdRoute
+  '/faculty/batches/$batchId': typeof FacultyBatchesBatchIdRoute
   '/faculty/sessions/$id': typeof FacultySessionsIdRoute
   '/faculty/sessions/': typeof FacultySessionsIndexRoute
 }
@@ -161,9 +189,11 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/student': typeof StudentRouteWithChildren
   '/student-login': typeof StudentLoginRoute
+  '/admin/batches': typeof AdminBatchesRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/faculty': typeof AdminFacultyRoute
   '/admin/students': typeof AdminStudentsRoute
+  '/faculty/batches': typeof FacultyBatchesRouteWithChildren
   '/faculty/dashboard': typeof FacultyDashboardRoute
   '/faculty/profile': typeof FacultyProfileRoute
   '/faculty/reports': typeof FacultyReportsRoute
@@ -172,6 +202,8 @@ export interface FileRoutesByTo {
   '/student/history': typeof StudentHistoryRoute
   '/student/profile': typeof StudentProfileRoute
   '/student/scan': typeof StudentScanRoute
+  '/admin/batches/$id': typeof AdminBatchesIdRoute
+  '/faculty/batches/$batchId': typeof FacultyBatchesBatchIdRoute
   '/faculty/sessions/$id': typeof FacultySessionsIdRoute
   '/faculty/sessions': typeof FacultySessionsIndexRoute
 }
@@ -184,9 +216,11 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/student': typeof StudentRouteWithChildren
   '/student-login': typeof StudentLoginRoute
+  '/admin/batches': typeof AdminBatchesRouteWithChildren
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/faculty': typeof AdminFacultyRoute
   '/admin/students': typeof AdminStudentsRoute
+  '/faculty/batches': typeof FacultyBatchesRouteWithChildren
   '/faculty/dashboard': typeof FacultyDashboardRoute
   '/faculty/profile': typeof FacultyProfileRoute
   '/faculty/reports': typeof FacultyReportsRoute
@@ -195,6 +229,8 @@ export interface FileRoutesById {
   '/student/history': typeof StudentHistoryRoute
   '/student/profile': typeof StudentProfileRoute
   '/student/scan': typeof StudentScanRoute
+  '/admin/batches/$id': typeof AdminBatchesIdRoute
+  '/faculty/batches/$batchId': typeof FacultyBatchesBatchIdRoute
   '/faculty/sessions/$id': typeof FacultySessionsIdRoute
   '/faculty/sessions/': typeof FacultySessionsIndexRoute
 }
@@ -208,9 +244,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/student'
     | '/student-login'
+    | '/admin/batches'
     | '/admin/dashboard'
     | '/admin/faculty'
     | '/admin/students'
+    | '/faculty/batches'
     | '/faculty/dashboard'
     | '/faculty/profile'
     | '/faculty/reports'
@@ -219,6 +257,8 @@ export interface FileRouteTypes {
     | '/student/history'
     | '/student/profile'
     | '/student/scan'
+    | '/admin/batches/$id'
+    | '/faculty/batches/$batchId'
     | '/faculty/sessions/$id'
     | '/faculty/sessions/'
   fileRoutesByTo: FileRoutesByTo
@@ -230,9 +270,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/student'
     | '/student-login'
+    | '/admin/batches'
     | '/admin/dashboard'
     | '/admin/faculty'
     | '/admin/students'
+    | '/faculty/batches'
     | '/faculty/dashboard'
     | '/faculty/profile'
     | '/faculty/reports'
@@ -241,6 +283,8 @@ export interface FileRouteTypes {
     | '/student/history'
     | '/student/profile'
     | '/student/scan'
+    | '/admin/batches/$id'
+    | '/faculty/batches/$batchId'
     | '/faculty/sessions/$id'
     | '/faculty/sessions'
   id:
@@ -252,9 +296,11 @@ export interface FileRouteTypes {
     | '/login'
     | '/student'
     | '/student-login'
+    | '/admin/batches'
     | '/admin/dashboard'
     | '/admin/faculty'
     | '/admin/students'
+    | '/faculty/batches'
     | '/faculty/dashboard'
     | '/faculty/profile'
     | '/faculty/reports'
@@ -263,6 +309,8 @@ export interface FileRouteTypes {
     | '/student/history'
     | '/student/profile'
     | '/student/scan'
+    | '/admin/batches/$id'
+    | '/faculty/batches/$batchId'
     | '/faculty/sessions/$id'
     | '/faculty/sessions/'
   fileRoutesById: FileRoutesById
@@ -384,6 +432,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FacultyDashboardRouteImport
       parentRoute: typeof FacultyRoute
     }
+    '/faculty/batches': {
+      id: '/faculty/batches'
+      path: '/batches'
+      fullPath: '/faculty/batches'
+      preLoaderRoute: typeof FacultyBatchesRouteImport
+      parentRoute: typeof FacultyRoute
+    }
     '/admin/students': {
       id: '/admin/students'
       path: '/students'
@@ -405,6 +460,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/batches': {
+      id: '/admin/batches'
+      path: '/batches'
+      fullPath: '/admin/batches'
+      preLoaderRoute: typeof AdminBatchesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/faculty/sessions/': {
       id: '/faculty/sessions/'
       path: '/sessions'
@@ -419,16 +481,44 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FacultySessionsIdRouteImport
       parentRoute: typeof FacultyRoute
     }
+    '/faculty/batches/$batchId': {
+      id: '/faculty/batches/$batchId'
+      path: '/$batchId'
+      fullPath: '/faculty/batches/$batchId'
+      preLoaderRoute: typeof FacultyBatchesBatchIdRouteImport
+      parentRoute: typeof FacultyBatchesRoute
+    }
+    '/admin/batches/$id': {
+      id: '/admin/batches/$id'
+      path: '/$id'
+      fullPath: '/admin/batches/$id'
+      preLoaderRoute: typeof AdminBatchesIdRouteImport
+      parentRoute: typeof AdminBatchesRoute
+    }
   }
 }
 
+interface AdminBatchesRouteChildren {
+  AdminBatchesIdRoute: typeof AdminBatchesIdRoute
+}
+
+const AdminBatchesRouteChildren: AdminBatchesRouteChildren = {
+  AdminBatchesIdRoute: AdminBatchesIdRoute,
+}
+
+const AdminBatchesRouteWithChildren = AdminBatchesRoute._addFileChildren(
+  AdminBatchesRouteChildren,
+)
+
 interface AdminRouteChildren {
+  AdminBatchesRoute: typeof AdminBatchesRouteWithChildren
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminFacultyRoute: typeof AdminFacultyRoute
   AdminStudentsRoute: typeof AdminStudentsRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminBatchesRoute: AdminBatchesRouteWithChildren,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminFacultyRoute: AdminFacultyRoute,
   AdminStudentsRoute: AdminStudentsRoute,
@@ -436,7 +526,20 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface FacultyBatchesRouteChildren {
+  FacultyBatchesBatchIdRoute: typeof FacultyBatchesBatchIdRoute
+}
+
+const FacultyBatchesRouteChildren: FacultyBatchesRouteChildren = {
+  FacultyBatchesBatchIdRoute: FacultyBatchesBatchIdRoute,
+}
+
+const FacultyBatchesRouteWithChildren = FacultyBatchesRoute._addFileChildren(
+  FacultyBatchesRouteChildren,
+)
+
 interface FacultyRouteChildren {
+  FacultyBatchesRoute: typeof FacultyBatchesRouteWithChildren
   FacultyDashboardRoute: typeof FacultyDashboardRoute
   FacultyProfileRoute: typeof FacultyProfileRoute
   FacultyReportsRoute: typeof FacultyReportsRoute
@@ -446,6 +549,7 @@ interface FacultyRouteChildren {
 }
 
 const FacultyRouteChildren: FacultyRouteChildren = {
+  FacultyBatchesRoute: FacultyBatchesRouteWithChildren,
   FacultyDashboardRoute: FacultyDashboardRoute,
   FacultyProfileRoute: FacultyProfileRoute,
   FacultyReportsRoute: FacultyReportsRoute,

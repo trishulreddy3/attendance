@@ -13,9 +13,12 @@ public interface StudentRepository extends MongoRepository<Student, String> {
     Optional<Student> findByStudentId(String studentId);
     boolean existsByEmail(String email);
     boolean existsByStudentId(String studentId);
+    boolean existsByRollNumber(String rollNumber);
 
     List<Student> findByBranch(String branch);
     List<Student> findByCreatedById(String facultyId);
+    List<Student> findByBatchId(String batchId);
 
     List<Student> findByNameContainingIgnoreCaseOrStudentIdContainingIgnoreCase(String name, String studentId);
 }
+

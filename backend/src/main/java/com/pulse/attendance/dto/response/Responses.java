@@ -1,6 +1,7 @@
 package com.pulse.attendance.dto.response;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.lang.String;
@@ -14,7 +15,9 @@ public class Responses {
     
     public record FacultyDTO(String id, String name, String email, String mobile, String branch) {}
     
-    public record StudentDTO(String id, String studentId, String name, String email, String mobile, String branch, String createdBy) {}
+    public record StudentDTO(String id, String studentId, String rollNumber, String name, String email, String mobile, String branch, String batchId, String batchName, String createdBy) {}
+
+    public record StudentWithPasswordDTO(String studentId, String rollNumber, String name, String email, String plainPassword) {}
     
     public record SessionDTO(
         String id, String name, String subject, String branch, 
@@ -52,6 +55,7 @@ public class Responses {
             long totalStudents,
             long totalSessions,
             long totalAttendance,
+            long totalBatches,
             List<FacultyDTO> facultyList,
             List<ChartData> activityData
     ) {}
@@ -71,4 +75,60 @@ public class Responses {
     
     // QR
     public record QrResponse(String qrToken, int refreshInterval) {}
+
+    // Batch Module
+    public record BatchDTO(
+            String id,
+            String batchName,
+            String facultyId,
+            String facultyName,
+            String facultyEmail,
+            String facultyMobile,
+            LocalDate startDate,
+            LocalDate endDate,
+            long studentCount,
+            LocalDateTime createdAt
+    ) {}
+
+    public record BatchImportResultDTO(
+            String batchId,
+            String batchName,
+            int totalFound,
+            int imported,
+            int duplicatesSkipped,
+            int invalidSkipped,
+            List<String> errors,
+            List<StudentWithPasswordDTO> importedStudents
+    ) {}
+
+    public record BatchAttendanceRecordDTO(
+            String id,
+            String studentId,
+            String studentName,
+            String rollNumber,
+            LocalDate attendanceDate,
+            String session,
+            String status
+    ) {}
+
+    public record BatchAttendanceGridDTO(
+            String batchId,
+            String batchName,
+            LocalDate startDate,
+            LocalDate endDate,
+            List<BatchStudentRowDTO> rows
+    ) {}
+
+    public record BatchStudentRowDTO(
+            String studentId,
+            String studentName,
+            String rollNumber,
+            String email,
+            List<BatchAttendanceRecordDTO> records,
+            long totalPresent,
+            long totalAbsent,
+            long totalNotMarked,
+            long totalSessions,
+            int attendancePct
+    ) {}
 }

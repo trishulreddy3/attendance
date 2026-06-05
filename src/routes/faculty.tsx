@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { BarChart3, LayoutDashboard, Radio, User, Users } from "lucide-react";
+import { BarChart3, BookOpen, LayoutDashboard, Radio, User, Users } from "lucide-react";
 import { useEffect } from "react";
 import { AppShell } from "@/components/layout/AppShell";
 import { useApp } from "@/lib/store";
@@ -10,6 +10,7 @@ export const Route = createFileRoute("/faculty")({
 
 const NAV = [
   { to: "/faculty/dashboard", label: "Dashboard", icon: <LayoutDashboard /> },
+  { to: "/faculty/batches", label: "Batches", icon: <BookOpen /> },
   { to: "/faculty/students", label: "Students", icon: <Users /> },
   { to: "/faculty/sessions", label: "Sessions", icon: <Radio /> },
   { to: "/faculty/reports", label: "Reports", icon: <BarChart3 /> },
@@ -18,6 +19,7 @@ const NAV = [
 
 const TITLES: Record<string, string> = {
   "/faculty/dashboard": "Dashboard",
+  "/faculty/batches": "My Batches",
   "/faculty/students": "Students",
   "/faculty/sessions": "Sessions",
   "/faculty/reports": "Reports",

@@ -4,6 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class Requests {
@@ -74,5 +75,17 @@ public class Requests {
             @NotNull(message = "Latitude is required") BigDecimal latitude,
             @NotNull(message = "Longitude is required") BigDecimal longitude,
             @NotBlank(message = "Device Fingerprint is required") String deviceFingerprint
+    ) {}
+
+    public record CreateBatchReq(
+            @NotBlank(message = "Batch name is required") String batchName,
+            @NotNull(message = "Start date is required") LocalDate startDate,
+            @NotNull(message = "End date is required") LocalDate endDate,
+            // Faculty fields — either provide existing facultyId OR new faculty details
+            String facultyId,           // existing faculty (optional)
+            String facultyName,
+            String facultyEmail,
+            String facultyMobile,
+            String facultyPassword
     ) {}
 }

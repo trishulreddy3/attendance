@@ -25,6 +25,9 @@ public class Student {
     @Indexed(unique = true)
     private String studentId;
 
+    @Indexed
+    private String rollNumber;
+
     private String name;
 
     @Indexed(unique = true)
@@ -35,6 +38,11 @@ public class Student {
     private String password;
 
     private String branch;
+
+    @Indexed
+    private String batchId;
+
+    private String batchName;
 
     @DocumentReference(lazy = true)
     private Faculty createdBy;
