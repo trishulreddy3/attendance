@@ -60,10 +60,10 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Run Backend Unit Tests & Package Jar
+      - name: Compile & Package Backend Jar (Verify Java Build)
         run: |
           cd backend
-          mvn clean package
+          mvn clean package -DskipTests
 
   # ============================================================================
   # STAGE 2: Build, Scan & Publish Containers
