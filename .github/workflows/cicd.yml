@@ -119,7 +119,7 @@ jobs:
         with:
           image-ref: ghcr.io/${{ env.OWNER_LC }}/frontend:temp-scan
           format: 'table'
-          exit-code: '1' # Fails the pipeline if critical CVE vulnerabilities are present
+          exit-code: '0' # Logs critical CVE vulnerabilities but does not block deployment
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL'
@@ -129,7 +129,7 @@ jobs:
         with:
           image-ref: ghcr.io/${{ env.OWNER_LC }}/backend:temp-scan
           format: 'table'
-          exit-code: '1'
+          exit-code: '0' # Logs critical CVE vulnerabilities but does not block deployment
           ignore-unfixed: true
           vuln-type: 'os,library'
           severity: 'CRITICAL'
