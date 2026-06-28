@@ -34,7 +34,7 @@ services:
     # Pull the prebuilt backend image from GitHub Container Registry (GHCR).
     # We use environment variable interpolation with fallback defaults.
     # On the server, the .env file will specify the correct IMAGE_TAG (e.g. Git Commit SHA).
-    image: ghcr.io/trishulreddy3/backend:latest
+    image: ghcr.io/trishulreddy3/pulse-backend:latest
     container_name: attendance-backend
     restart: unless-stopped
     
@@ -60,7 +60,7 @@ services:
   # ----------------------------------------------------------------------------
   frontend:
     # Pull the prebuilt frontend image from GitHub Container Registry (GHCR).
-    image: ghcr.io/trishulreddy3/frontend:latest
+    image: ghcr.io/trishulreddy3/pulse-frontend:latest
     container_name: attendance-frontend
     restart: unless-stopped
     

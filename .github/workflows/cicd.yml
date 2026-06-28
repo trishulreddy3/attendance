@@ -100,7 +100,7 @@ jobs:
           context: .
           file: ./Dockerfile
           load: true
-          tags: ghcr.io/${{ env.OWNER_LC }}/frontend:temp-scan
+          tags: ghcr.io/${{ env.OWNER_LC }}/pulse-frontend:temp-scan
           build-args: |
             VITE_API_BASE_URL=/api
             VITE_WS_URL=/ws
@@ -111,13 +111,13 @@ jobs:
           context: ./backend
           file: ./backend/Dockerfile
           load: true
-          tags: ghcr.io/${{ env.OWNER_LC }}/backend:temp-scan
+          tags: ghcr.io/${{ env.OWNER_LC }}/pulse-backend:temp-scan
 
       # Run Trivy vulnerability scan
       - name: Run Trivy Security Scan on Frontend
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ env.OWNER_LC }}/frontend:temp-scan
+          image-ref: ghcr.io/${{ env.OWNER_LC }}/pulse-frontend:temp-scan
           format: 'table'
           exit-code: '0' # Logs critical CVE vulnerabilities but does not block deployment
           ignore-unfixed: true
@@ -127,7 +127,7 @@ jobs:
       - name: Run Trivy Security Scan on Backend
         uses: aquasecurity/trivy-action@master
         with:
-          image-ref: ghcr.io/${{ env.OWNER_LC }}/backend:temp-scan
+          image-ref: ghcr.io/${{ env.OWNER_LC }}/pulse-backend:temp-scan
           format: 'table'
           exit-code: '0' # Logs critical CVE vulnerabilities but does not block deployment
           ignore-unfixed: true
@@ -142,8 +142,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.OWNER_LC }}/frontend:latest
-            ghcr.io/${{ env.OWNER_LC }}/frontend:sha-${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LC }}/pulse-frontend:latest
+            ghcr.io/${{ env.OWNER_LC }}/pulse-frontend:sha-${{ github.sha }}
           build-args: |
             VITE_API_BASE_URL=/api
             VITE_WS_URL=/ws
@@ -155,8 +155,8 @@ jobs:
           file: ./backend/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ env.OWNER_LC }}/backend:latest
-            ghcr.io/${{ env.OWNER_LC }}/backend:sha-${{ github.sha }}
+            ghcr.io/${{ env.OWNER_LC }}/pulse-backend:latest
+            ghcr.io/${{ env.OWNER_LC }}/pulse-backend:sha-${{ github.sha }}
 
   # ============================================================================
   # STAGE 3: Secure, Source-Free deployment (Continuous Deployment)
