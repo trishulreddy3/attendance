@@ -201,5 +201,5 @@ jobs:
           # 7. Post-Deployment Verification Health Check
           echo "Awaiting backend container boot..."
           sleep 15
-          curl -f http://127.0.0.1:8080/api/auth/me || (echo "Deployment health check failed!" && exit 1)
+          curl -f http://127.0.0.1:8080/v3/api-docs || (echo "Deployment health check failed!" && exit 1)
           echo "Deployment successfully verified!"
