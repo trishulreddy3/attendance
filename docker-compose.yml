@@ -1,0 +1,88 @@
+version: '3.8'
+
+# ==============================================================================
+# SERVICES DEFINITION
+# ==============================================================================
+# Defines the containers that make up our application stack.
+services:
+
+  # ----------------------------------------------------------------------------
+  # DATABASE SERVICE (MongoDB)
+  # ----------------------------------------------------------------------------
+  mongodb:
+    # Use the official LTS MongoDB version 7.0 image from Docker Hub.
+    image: mongo:7.0
+    container_name: attendance-db
+    restart: unless-stopped
+    
+    # Map container ports to host ports.
+    # Bind to 127.0.0.1 (localhost) so MongoDB is NOT exposed to the public internet.
+    ports:
+      - "127.0.0.1:27017:27017"
+      
+    # Mount persistent storage volumes.
+    volumes:
+      - mongo-data:/data/db
+      
+    networks:
+      - attendance-network
+
+  # ----------------------------------------------------------------------------
+  # BACKEND SERVICE (Spring Boot)
+  # ----------------------------------------------------------------------------
+  backend:
+    # Pull the prebuilt backend image from GitHub Container Registry (GHCR).
+    # We use environment variable interpolation with fallback defaults.
+    # On the server, the .env file will specify the correct IMAGE_TAG (e.g. Git Commit SHA).
+    image: ghcr.io/trishulreddy3/backend:latest
+    container_name: attendance-backend
+    restart: unless-stopped
+    
+    # Only map port to localhost. The host Nginx reverse proxy will forward public traffic here.
+    ports:
+      - "127.0.0.1:8080:8080"
+      
+    # Environment variables injected into the Spring Boot container at runtime.
+    # MONGODB_URI uses the hostname 'mongodb' which is the service name of the DB.
+    environment:
+      - MONGODB_URI=mongodb://mongodb:27017/pulse-attendance
+      - JWT_SECRET=${JWT_SECRET}
+      - SPRING_PROFILES_ACTIVE=prod
+      
+    depends_on:
+      - mongodb
+      
+    networks:
+      - attendance-network
+
+  # ----------------------------------------------------------------------------
+  # FRONTEND SERVICE (React Vite App run as Node.js SSR Server)
+  # ----------------------------------------------------------------------------
+  frontend:
+    # Pull the prebuilt frontend image from GitHub Container Registry (GHCR).
+    image: ghcr.io/trishulreddy3/frontend:latest
+    container_name: attendance-frontend
+    restart: unless-stopped
+    
+    # Map host port 3000 to container port 3000 (where the Nitro Node.js server listens).
+    ports:
+      - "127.0.0.1:3000:3000"
+      
+    depends_on:
+      - backend
+      
+    networks:
+      - attendance-network
+
+# ==============================================================================
+# NETWORKS DEFINITION
+# ==============================================================================
+networks:
+  attendance-network:
+    driver: bridge
+
+# ==============================================================================
+# VOLUMES DEFINITION
+# ==============================================================================
+volumes:
+  mongo-data:

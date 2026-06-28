@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.DEV ? "http://localhost:8080/api" : "https://attendance-dhvi.onrender.com/api";
+const API_BASE = import.meta.env.VITE_API_BASE_URL || (import.meta.env.DEV ? "http://localhost:8080/api" : "/api");
 
 export function getToken() {
   if (typeof window === "undefined") return null;

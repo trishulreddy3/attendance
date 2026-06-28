@@ -1,0 +1,35 @@
+# Ignore node_modules because we want to install dependencies inside the container 
+# using the exact architecture and versions specified in package-lock.json
+node_modules
+
+# Ignore local build folder to prevent copying outdated or local development builds
+dist
+.output
+.vinxi
+.tanstack
+.nitro
+dist-ssr
+
+# Ignore Git directory and logs
+.git
+.gitignore
+*.log
+npm-debug.log*
+
+# Ignore environment files to prevent accidental leakage of local development secrets
+.env
+.env.local
+.env.development
+.env.production
+
+# Ignore local configuration files and IDE-specific files
+.vscode
+.idea
+.DS_Store
+README.md
+Dockerfile
+docker-compose.yml
+nginx.host.conf
+devops_guide.md
+walkthrough.md
+task.md

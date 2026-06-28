@@ -90,8 +90,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
       stompClient.current.deactivate();
     }
 
+    let brokerURL = import.meta.env.VITE_WS_URL || (import.meta.env.DEV ? "ws://localhost:8080/ws" : "/ws");
+    if (typeof window !== "undefined" && brokerURL && !brokerURL.startsWith("ws://") && !brokerURL.startsWith("wss://")) {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      brokerURL = `${protocol}//${window.location.host}${brokerURL}`;
+    }
+
     const client = new Client({
-      brokerURL: import.meta.env.DEV ? "ws://localhost:8080/ws" : "wss://attendance-dhvi.onrender.com/ws",
+      brokerURL,
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,

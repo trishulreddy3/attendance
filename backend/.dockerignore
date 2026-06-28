@@ -1,0 +1,29 @@
+# Ignore build output folder
+target/
+
+# Ignore Maven wrapper files and local caches
+.mvn/
+mvnw
+mvnw.cmd
+
+# Ignore IDE files and configuration files
+.settings/
+.classpath
+.project
+.idea/
+*.iml
+.vscode/
+
+# Ignore Git configurations and local logs
+.git
+.gitignore
+*.log
+
+# Ignore local environment configs and secret files
+.env
+.env.local
+.env.properties
+Dockerfile
+docker-compose.yml
+nginx.conf
+nginx.host.conf
