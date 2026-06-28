@@ -24,14 +24,6 @@ function ScanPage() {
   const [error, setError] = useState<string>("");
   const [cachedPos, setCachedPos] = useState<{lat: number, lng: number} | null>(null);
 
-  if (!me) return null;
-
-  const liveSessions = sessions.filter(
-    (s) => s.branch === me.branch &&
-      Date.now() >= new Date(s.startTime).getTime() &&
-      Date.now() <= new Date(s.endTime).getTime(),
-  );
-
   // Pre-fetch location as soon as camera opens to prevent token expiration
   useEffect(() => {
     if (stage === "scanning") {
@@ -46,7 +38,7 @@ function ScanPage() {
   }, [stage]);
 
   useEffect(() => {
-    if (stage !== "geo") return;
+    if (stage !== "geo" || !me) return;
 
     const performMark = async (lat: number, lng: number) => {
       setStage("marking");
@@ -87,7 +79,15 @@ function ScanPage() {
       }, 400);
       return () => clearTimeout(t);
     }
-  }, [stage, pickedSessionId, qrToken, me.id, markAttendance, cachedPos]);
+  }, [stage, pickedSessionId, qrToken, me?.id, markAttendance, cachedPos]);
+
+  if (!me) return null;
+
+  const liveSessions = sessions.filter(
+    (s) => s.branch === me.branch &&
+      Date.now() >= new Date(s.startTime).getTime() &&
+      Date.now() <= new Date(s.endTime).getTime(),
+  );
 
   const reset = () => { setStage("idle"); setPickedSessionId(null); setQrToken(null); setError(""); setCachedPos(null); };
 
