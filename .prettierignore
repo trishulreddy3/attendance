@@ -6,3 +6,8 @@ pnpm-lock.yaml
 package-lock.json
 bun.lock
 routeTree.gen.ts
+clean-db.js
+find-sessions.js
+refactor.cjs
+test-mongo.cjs
+
