@@ -8,9 +8,17 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   {
     ignores: [
-      "dist",
-      ".output",
-      ".vinxi",
+      "dist/**",
+      ".output/**",
+      ".vinxi/**",
+      ".tanstack/**",
+      ".netlify/**",
+      ".vercel/**",
+      "backend/**",
+      "node_modules/**",
+      "coverage/**",
+      "screenshots/**",
+      "tests/**",
       "clean-db.js",
       "find-sessions.js",
       "refactor.cjs",
