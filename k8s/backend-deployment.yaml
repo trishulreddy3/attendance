@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pulse-backend
+  namespace: pulse-attendance
+  labels:
+    app: pulse-backend
+    app.kubernetes.io/name: pulse-backend
+    app.kubernetes.io/part-of: pulse-attendance
+    app.kubernetes.io/component: backend
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: pulse-backend
+  template:
+    metadata:
+      labels:
+        app: pulse-backend
+        app.kubernetes.io/name: pulse-backend
+        app.kubernetes.io/part-of: pulse-attendance
+        app.kubernetes.io/component: backend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+      containers:
+        - name: backend
+          image: ghcr.io/trishulreddy3/pulse-backend:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: PORT
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: SPRING_PROFILES_ACTIVE
+            - name: ATTENDANCE_DEFAULT_RADIUS
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: ATTENDANCE_DEFAULT_RADIUS
+            - name: MONGODB_URI
+              valueFrom:
+                secretKeyRef:
+                  name: pulse-secrets
+                  key: MONGODB_URI
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: pulse-secrets
+                  key: JWT_SECRET
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2

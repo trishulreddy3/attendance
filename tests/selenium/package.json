@@ -1,0 +1,13 @@
+{
+  "name": "pulse-attendance-selenium-tests",
+  "version": "1.0.0",
+  "description": "Comprehensive automated Selenium WebDriver test suite for Student Attendance Management System",
+  "main": "run_all_tests.js",
+  "type": "module",
+  "scripts": {
+    "test": "node run_all_tests.js"
+  },
+  "dependencies": {
+    "selenium-webdriver": "^4.29.0"
+  }
+}

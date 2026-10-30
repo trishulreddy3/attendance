@@ -32,45 +32,49 @@ public class StudentController {
     private final DashboardService dashboardService;
 
     @PostMapping
-    @PreAuthorize("hasRole('ROLE_FACULTY')")
+    @PreAuthorize("hasRole('ROLE_FACULTY') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudentDTO> createStudent(
             @Valid @RequestBody CreateStudentReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(studentService.createStudent(userDetails.getId(), req));
+        String facultyId = userDetails != null ? userDetails.getId() : null;
+        return ResponseEntity.ok(studentService.createStudent(facultyId, req));
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ROLE_FACULTY')")
+    @PreAuthorize("hasRole('ROLE_FACULTY') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<StudentDTO>> getAllStudents(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(studentService.getAllStudents(userDetails.getId()));
+        String facultyId = userDetails != null ? userDetails.getId() : null;
+        return ResponseEntity.ok(studentService.getAllStudents(facultyId));
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_FACULTY') or (hasRole('ROLE_STUDENT') and principal.id == #id)")
+    @PreAuthorize("hasRole('ROLE_FACULTY') or hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and principal.id == #id)")
     public ResponseEntity<StudentDTO> getStudent(@PathVariable String id) {
         return ResponseEntity.ok(studentService.getStudentProfile(id));
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_FACULTY')")
+    @PreAuthorize("hasRole('ROLE_FACULTY') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<StudentDTO> updateStudent(
             @PathVariable String id,
             @Valid @RequestBody UpdateStudentReq req,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        return ResponseEntity.ok(studentService.updateStudent(userDetails.getId(), id, req));
+        String facultyId = userDetails != null ? userDetails.getId() : null;
+        return ResponseEntity.ok(studentService.updateStudent(facultyId, id, req));
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_FACULTY')")
+    @PreAuthorize("hasRole('ROLE_FACULTY') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<MessageResponse> deleteStudent(
             @PathVariable String id,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        studentService.deleteStudent(userDetails.getId(), id);
+        String facultyId = userDetails != null ? userDetails.getId() : null;
+        studentService.deleteStudent(facultyId, id);
         return ResponseEntity.ok(new MessageResponse("Student deleted successfully"));
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasRole('ROLE_FACULTY')")
+    @PreAuthorize("hasRole('ROLE_FACULTY') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<Page<StudentDTO>> searchStudents(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) String branch,

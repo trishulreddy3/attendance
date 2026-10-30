@@ -23,7 +23,9 @@ import { Route as StudentDashboardRouteImport } from './routes/student.dashboard
 import { Route as FacultyStudentsRouteImport } from './routes/faculty.students'
 import { Route as FacultyReportsRouteImport } from './routes/faculty.reports'
 import { Route as FacultyProfileRouteImport } from './routes/faculty.profile'
+import { Route as FacultyMonthlyReportsRouteImport } from './routes/faculty.monthly-reports'
 import { Route as FacultyDashboardRouteImport } from './routes/faculty.dashboard'
+import { Route as FacultyDailyAttendanceRouteImport } from './routes/faculty.daily-attendance'
 import { Route as FacultyBatchesRouteImport } from './routes/faculty.batches'
 import { Route as AdminStudentsRouteImport } from './routes/admin.students'
 import { Route as AdminFacultyRouteImport } from './routes/admin.faculty'
@@ -104,9 +106,19 @@ const FacultyProfileRoute = FacultyProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => FacultyRoute,
 } as any)
+const FacultyMonthlyReportsRoute = FacultyMonthlyReportsRouteImport.update({
+  id: '/monthly-reports',
+  path: '/monthly-reports',
+  getParentRoute: () => FacultyRoute,
+} as any)
 const FacultyDashboardRoute = FacultyDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => FacultyRoute,
+} as any)
+const FacultyDailyAttendanceRoute = FacultyDailyAttendanceRouteImport.update({
+  id: '/daily-attendance',
+  path: '/daily-attendance',
   getParentRoute: () => FacultyRoute,
 } as any)
 const FacultyBatchesRoute = FacultyBatchesRouteImport.update({
@@ -168,7 +180,9 @@ export interface FileRoutesByFullPath {
   '/admin/faculty': typeof AdminFacultyRoute
   '/admin/students': typeof AdminStudentsRoute
   '/faculty/batches': typeof FacultyBatchesRouteWithChildren
+  '/faculty/daily-attendance': typeof FacultyDailyAttendanceRoute
   '/faculty/dashboard': typeof FacultyDashboardRoute
+  '/faculty/monthly-reports': typeof FacultyMonthlyReportsRoute
   '/faculty/profile': typeof FacultyProfileRoute
   '/faculty/reports': typeof FacultyReportsRoute
   '/faculty/students': typeof FacultyStudentsRoute
@@ -194,7 +208,9 @@ export interface FileRoutesByTo {
   '/admin/faculty': typeof AdminFacultyRoute
   '/admin/students': typeof AdminStudentsRoute
   '/faculty/batches': typeof FacultyBatchesRouteWithChildren
+  '/faculty/daily-attendance': typeof FacultyDailyAttendanceRoute
   '/faculty/dashboard': typeof FacultyDashboardRoute
+  '/faculty/monthly-reports': typeof FacultyMonthlyReportsRoute
   '/faculty/profile': typeof FacultyProfileRoute
   '/faculty/reports': typeof FacultyReportsRoute
   '/faculty/students': typeof FacultyStudentsRoute
@@ -221,7 +237,9 @@ export interface FileRoutesById {
   '/admin/faculty': typeof AdminFacultyRoute
   '/admin/students': typeof AdminStudentsRoute
   '/faculty/batches': typeof FacultyBatchesRouteWithChildren
+  '/faculty/daily-attendance': typeof FacultyDailyAttendanceRoute
   '/faculty/dashboard': typeof FacultyDashboardRoute
+  '/faculty/monthly-reports': typeof FacultyMonthlyReportsRoute
   '/faculty/profile': typeof FacultyProfileRoute
   '/faculty/reports': typeof FacultyReportsRoute
   '/faculty/students': typeof FacultyStudentsRoute
@@ -249,7 +267,9 @@ export interface FileRouteTypes {
     | '/admin/faculty'
     | '/admin/students'
     | '/faculty/batches'
+    | '/faculty/daily-attendance'
     | '/faculty/dashboard'
+    | '/faculty/monthly-reports'
     | '/faculty/profile'
     | '/faculty/reports'
     | '/faculty/students'
@@ -275,7 +295,9 @@ export interface FileRouteTypes {
     | '/admin/faculty'
     | '/admin/students'
     | '/faculty/batches'
+    | '/faculty/daily-attendance'
     | '/faculty/dashboard'
+    | '/faculty/monthly-reports'
     | '/faculty/profile'
     | '/faculty/reports'
     | '/faculty/students'
@@ -301,7 +323,9 @@ export interface FileRouteTypes {
     | '/admin/faculty'
     | '/admin/students'
     | '/faculty/batches'
+    | '/faculty/daily-attendance'
     | '/faculty/dashboard'
+    | '/faculty/monthly-reports'
     | '/faculty/profile'
     | '/faculty/reports'
     | '/faculty/students'
@@ -425,11 +449,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FacultyProfileRouteImport
       parentRoute: typeof FacultyRoute
     }
+    '/faculty/monthly-reports': {
+      id: '/faculty/monthly-reports'
+      path: '/monthly-reports'
+      fullPath: '/faculty/monthly-reports'
+      preLoaderRoute: typeof FacultyMonthlyReportsRouteImport
+      parentRoute: typeof FacultyRoute
+    }
     '/faculty/dashboard': {
       id: '/faculty/dashboard'
       path: '/dashboard'
       fullPath: '/faculty/dashboard'
       preLoaderRoute: typeof FacultyDashboardRouteImport
+      parentRoute: typeof FacultyRoute
+    }
+    '/faculty/daily-attendance': {
+      id: '/faculty/daily-attendance'
+      path: '/daily-attendance'
+      fullPath: '/faculty/daily-attendance'
+      preLoaderRoute: typeof FacultyDailyAttendanceRouteImport
       parentRoute: typeof FacultyRoute
     }
     '/faculty/batches': {
@@ -540,7 +578,9 @@ const FacultyBatchesRouteWithChildren = FacultyBatchesRoute._addFileChildren(
 
 interface FacultyRouteChildren {
   FacultyBatchesRoute: typeof FacultyBatchesRouteWithChildren
+  FacultyDailyAttendanceRoute: typeof FacultyDailyAttendanceRoute
   FacultyDashboardRoute: typeof FacultyDashboardRoute
+  FacultyMonthlyReportsRoute: typeof FacultyMonthlyReportsRoute
   FacultyProfileRoute: typeof FacultyProfileRoute
   FacultyReportsRoute: typeof FacultyReportsRoute
   FacultyStudentsRoute: typeof FacultyStudentsRoute
@@ -550,7 +590,9 @@ interface FacultyRouteChildren {
 
 const FacultyRouteChildren: FacultyRouteChildren = {
   FacultyBatchesRoute: FacultyBatchesRouteWithChildren,
+  FacultyDailyAttendanceRoute: FacultyDailyAttendanceRoute,
   FacultyDashboardRoute: FacultyDashboardRoute,
+  FacultyMonthlyReportsRoute: FacultyMonthlyReportsRoute,
   FacultyProfileRoute: FacultyProfileRoute,
   FacultyReportsRoute: FacultyReportsRoute,
   FacultyStudentsRoute: FacultyStudentsRoute,

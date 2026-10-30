@@ -17,6 +17,7 @@ export interface Faculty {
 export interface Student {
   id: string;
   studentId: string;
+  rollNumber?: string;
   name: string;
   mobile: string;
   email: string;
@@ -43,7 +44,6 @@ export interface Session {
 interface AuthUser {
   kind: "faculty" | "student" | "admin";
   id: string;
-  id: string;
 }
 
 interface AppState {
@@ -57,7 +57,7 @@ interface AppState {
 interface Ctx extends AppState {
   loginAdmin: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   loginFaculty: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
-  loginStudent: (studentId: string, email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
+  loginStudent: (studentId: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   logout: () => void;
   addStudent: (s: any) => Promise<{ ok: boolean; error?: string }>;
   updateStudent: (id: string, s: any) => Promise<void>;
@@ -67,7 +67,13 @@ interface Ctx extends AppState {
   endSession: (id: string) => Promise<void>;
   createSession: (s: any) => Promise<Session>;
   refreshQr: (sessionId: string) => Promise<void>;
-  markAttendance: (sessionId: string, studentId: string, lat?: number, lng?: number) => Promise<{ ok: boolean; error?: string }>;
+  markAttendance: (
+    sessionId: string,
+    studentId: string,
+    qrToken?: any,
+    lat?: any,
+    lng?: any,
+  ) => Promise<{ ok: boolean; error?: string }>;
   currentFaculty: () => Faculty | null;
   currentStudent: () => Student | null;
   updateFaculty: (id: string, p: any) => Promise<void>;
@@ -78,7 +84,13 @@ interface Ctx extends AppState {
 const AppCtx = createContext<Ctx | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AppState>({ faculties: [], students: [], sessions: [], user: null, loading: true });
+  const [state, setState] = useState<AppState>({
+    faculties: [],
+    students: [],
+    sessions: [],
+    user: null,
+    loading: true,
+  });
 
   const update = (patch: Partial<AppState> | ((s: AppState) => AppState)) =>
     setState((s) => (typeof patch === "function" ? patch(s) : { ...s, ...patch }));
@@ -90,8 +102,20 @@ export function AppProvider({ children }: { children: ReactNode }) {
       stompClient.current.deactivate();
     }
 
+    let brokerURL =
+      import.meta.env.VITE_WS_URL || (import.meta.env.DEV ? "ws://localhost:8081/ws" : "/ws");
+    if (
+      typeof window !== "undefined" &&
+      brokerURL &&
+      !brokerURL.startsWith("ws://") &&
+      !brokerURL.startsWith("wss://")
+    ) {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      brokerURL = `${protocol}//${window.location.host}${brokerURL}`;
+    }
+
     const client = new Client({
-      brokerURL: import.meta.env.DEV ? "ws://localhost:8080/ws" : "wss://attendance-dhvi.onrender.com/ws",
+      brokerURL,
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -103,19 +127,23 @@ export function AppProvider({ children }: { children: ReactNode }) {
               ...cur,
               sessions: cur.sessions.map((x) =>
                 x.id === s.id
-                  ? { ...x, attendees: [...x.attendees.filter(a => a.studentId !== dto.studentId), { studentId: dto.studentId, at: dto.at }] }
-                  : x
+                  ? {
+                      ...x,
+                      attendees: [
+                        ...x.attendees.filter((a) => a.studentId !== dto.studentId),
+                        { studentId: dto.studentId, at: dto.at },
+                      ],
+                    }
+                  : x,
               ),
             }));
           });
-          
+
           client.subscribe(`/topic/session/${s.id}/qr`, (msg) => {
             const newToken = msg.body;
             update((cur) => ({
               ...cur,
-              sessions: cur.sessions.map((x) =>
-                x.id === s.id ? { ...x, qrToken: newToken } : x
-              ),
+              sessions: cur.sessions.map((x) => (x.id === s.id ? { ...x, qrToken: newToken } : x)),
             }));
           });
         });
@@ -134,7 +162,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return;
       }
       const me = await api.getMe();
-      let kind = "admin";
+      let kind: "faculty" | "student" | "admin" = "admin";
       if (me.studentId) kind = "student";
       else if (me.branch) kind = "faculty";
       update({ user: { kind, id: me.id } });
@@ -145,7 +173,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         update({ faculties: [me] });
         const [students, sessions] = await Promise.all([
           api.getAllStudents(),
-          api.getFacultySessions()
+          api.getFacultySessions(),
         ]);
         update({ students, sessions });
         setupWebSockets(sessions.filter((s: any) => new Date(s.endTime).getTime() >= Date.now()));
@@ -199,7 +227,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       try {
         const { getDeviceFingerprint } = await import("./device");
         const deviceFingerprint = await getDeviceFingerprint();
-        const res = await api.login({ username: studentId, password, kind: "student", deviceFingerprint });
+        const res = await api.login({
+          username: studentId,
+          password,
+          kind: "student",
+          deviceFingerprint,
+        });
         setToken(res.token);
         await refreshData();
         return { ok: true };
@@ -250,21 +283,35 @@ export function AppProvider({ children }: { children: ReactNode }) {
       const res = await api.refreshQr(sessionId);
       update((cur) => ({
         ...cur,
-        sessions: cur.sessions.map((x) => (x.id === sessionId ? { ...x, qrToken: res.qrToken } : x)),
+        sessions: cur.sessions.map((x) =>
+          x.id === sessionId ? { ...x, qrToken: res.qrToken } : x,
+        ),
       }));
     },
-    markAttendance: async (sessionId, studentId, qrToken, lat, lng) => {
+    markAttendance: async (
+      sessionId: string,
+      studentId: string,
+      qrToken?: any,
+      lat?: any,
+      lng?: any,
+    ) => {
       try {
         const { getDeviceFingerprint } = await import("./device");
         const deviceFingerprint = await getDeviceFingerprint();
-        await api.markAttendance(sessionId, { sessionId, qrToken, latitude: lat, longitude: lng, deviceFingerprint });
+        await api.markAttendance(sessionId, {
+          sessionId,
+          qrToken,
+          latitude: lat,
+          longitude: lng,
+          deviceFingerprint,
+        });
         // The websocket should theoretically push this, but let's eagerly update
         update((cur) => ({
           ...cur,
           sessions: cur.sessions.map((x) =>
             x.id === sessionId
               ? { ...x, attendees: [...x.attendees, { studentId, at: new Date().toISOString() }] }
-              : x
+              : x,
           ),
         }));
         return { ok: true };
@@ -272,8 +319,14 @@ export function AppProvider({ children }: { children: ReactNode }) {
         return { ok: false, error: e.message };
       }
     },
-    currentFaculty: () => state.user?.kind === "faculty" ? state.faculties.find((f) => f.id === state.user!.id) ?? null : null,
-    currentStudent: () => state.user?.kind === "student" ? state.students.find((f) => f.id === state.user!.id) ?? null : null,
+    currentFaculty: () =>
+      state.user?.kind === "faculty"
+        ? (state.faculties.find((f) => f.id === state.user!.id) ?? null)
+        : null,
+    currentStudent: () =>
+      state.user?.kind === "student"
+        ? (state.students.find((f) => f.id === state.user!.id) ?? null)
+        : null,
     updateFaculty: async (id, p) => {
       const nf = await api.updateFacultyProfile(p);
       update((cur) => ({ ...cur, faculties: cur.faculties.map((x) => (x.id === id ? nf : x)) }));

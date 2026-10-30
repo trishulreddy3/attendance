@@ -27,12 +27,14 @@ function AdminStudents() {
     onError: (e: any) => toast.error(e.message || "Failed to reset device"),
   });
 
-  const filtered = students.filter((s: any) => 
-    s.studentName.toLowerCase().includes(search.toLowerCase()) || 
-    s.studentId.toLowerCase().includes(search.toLowerCase())
+  const filtered = students.filter(
+    (s: any) =>
+      s.studentName.toLowerCase().includes(search.toLowerCase()) ||
+      s.studentId.toLowerCase().includes(search.toLowerCase()),
   );
 
-  if (isLoading) return <div className="p-6 text-muted-foreground animate-pulse">Loading students...</div>;
+  if (isLoading)
+    return <div className="p-6 text-muted-foreground animate-pulse">Loading students...</div>;
 
   return (
     <div className="p-6 space-y-6 max-w-5xl mx-auto">
@@ -64,7 +66,10 @@ function AdminStudents() {
             </thead>
             <tbody>
               {filtered.map((s: any) => (
-                <tr key={s.studentId} className="border-b border-border/50 last:border-0 hover:bg-accent/50 transition-colors">
+                <tr
+                  key={s.studentId}
+                  className="border-b border-border/50 last:border-0 hover:bg-accent/50 transition-colors"
+                >
                   <td className="px-6 py-4 font-medium">{s.studentName}</td>
                   <td className="px-6 py-4">
                     {s.status === "Bound" ? (
@@ -81,7 +86,9 @@ function AdminStudents() {
                     <div className="flex flex-col gap-1 text-xs text-muted-foreground">
                       {s.deviceFingerprint ? (
                         <>
-                          <span className="font-mono text-foreground">{s.deviceFingerprint.substring(0, 16)}...</span>
+                          <span className="font-mono text-foreground">
+                            {s.deviceFingerprint.substring(0, 16)}...
+                          </span>
                           <span>{new Date(s.boundAt).toLocaleString()}</span>
                         </>
                       ) : (
@@ -92,7 +99,11 @@ function AdminStudents() {
                   <td className="px-6 py-4 text-right">
                     <button
                       onClick={() => {
-                        if (confirm(`Reset device binding for ${s.studentName}? They will need to bind a new device on next login.`)) {
+                        if (
+                          confirm(
+                            `Reset device binding for ${s.studentName}? They will need to bind a new device on next login.`,
+                          )
+                        ) {
                           resetMutation.mutate(s.studentId);
                         }
                       }}
@@ -106,7 +117,9 @@ function AdminStudents() {
               ))}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">No students found.</td>
+                  <td colSpan={4} className="px-6 py-8 text-center text-muted-foreground">
+                    No students found.
+                  </td>
                 </tr>
               )}
             </tbody>

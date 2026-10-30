@@ -7,28 +7,32 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
-  nitro: { preset: "vercel" },
+  nitro: {
+    preset: "node-server",
+  },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
   },
-  server: {
-    allowedHosts: [
-      '9179-103-126-35-141.ngrok-free.app', 
-      '.ngrok-free.app', 
-      'ngrok-free.app', 
-      'all'
-    ],
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8080',
-        changeOrigin: true,
+  vite: {
+    server: {
+      allowedHosts: [
+        "9179-103-126-35-141.ngrok-free.app",
+        ".ngrok-free.app",
+        "ngrok-free.app",
+        "all",
+      ],
+      proxy: {
+        "/api": {
+          target: "http://localhost:8081",
+          changeOrigin: true,
+        },
+        "/ws": {
+          target: "http://localhost:8081",
+          ws: true,
+        },
       },
-      '/ws': {
-        target: 'http://localhost:8080',
-        ws: true,
-      }
-    }
-  }
+    },
+  },
 });

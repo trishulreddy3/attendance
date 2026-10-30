@@ -2,7 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Activity, CheckCircle2, Radio, TrendingUp, Users } from "lucide-react";
-import { Area, AreaChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
+import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { StatCard } from "@/components/common/StatCard";
 import { useApp } from "@/lib/store";
 import { api } from "@/lib/api";
@@ -34,30 +42,68 @@ function Dashboard() {
   return (
     <div className="mx-auto max-w-7xl space-y-6">
       <div>
-        <motion.h2 initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-semibold tracking-tight">
+        <motion.h2
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-2xl font-semibold tracking-tight"
+        >
           Good {greet()}, {me?.name?.split(" ")[1] ?? me?.name}.
         </motion.h2>
-        <p className="text-sm text-muted-foreground">Here's what's happening across your classes today.</p>
+        <p className="text-sm text-muted-foreground">
+          Here's what's happening across your classes today.
+        </p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Students" value={d.totalStudents} icon={<Users className="size-4" />} />
-        <StatCard label="Active Sessions" value={d.activeSessions} icon={<Radio className="size-4" />} delay={0.05} hint={d.activeSessions ? "Live now" : "None active"} />
-        <StatCard label="Present Today" value={d.presentToday} icon={<CheckCircle2 className="size-4" />} delay={0.1} />
-        <StatCard label="Attendance Rate" value={d.attendanceRate} suffix="%" icon={<TrendingUp className="size-4" />} delay={0.15} />
+        <StatCard
+          label="Total Students"
+          value={d.totalStudents}
+          icon={<Users className="size-4" />}
+        />
+        <StatCard
+          label="Active Sessions"
+          value={d.activeSessions}
+          icon={<Radio className="size-4" />}
+          delay={0.05}
+          hint={d.activeSessions ? "Live now" : "None active"}
+        />
+        <StatCard
+          label="Present Today"
+          value={d.presentToday}
+          icon={<CheckCircle2 className="size-4" />}
+          delay={0.1}
+        />
+        <StatCard
+          label="Attendance Rate"
+          value={d.attendanceRate}
+          suffix="%"
+          icon={<TrendingUp className="size-4" />}
+          delay={0.15}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-2xl border border-border bg-card p-5 lg:col-span-2">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-2xl border border-border bg-card p-5 lg:col-span-2"
+        >
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm font-semibold">Attendance Analytics</p>
               <p className="text-xs text-muted-foreground">Last 7 days</p>
             </div>
-            <Link to="/faculty/reports" className="text-xs text-primary hover:underline">View reports →</Link>
+            <Link to="/faculty/reports" className="text-xs text-primary hover:underline">
+              View reports →
+            </Link>
           </div>
           <div className="mt-4 h-64 relative">
-            {!data && <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm"><div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div></div>}
+            {!data && (
+              <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm">
+                <div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+              </div>
+            )}
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={d.last7Days} margin={{ left: -20, right: 8, top: 8 }}>
                 <defs>
@@ -67,17 +113,50 @@ function Dashboard() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="day" stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis stroke="var(--muted-foreground)" fontSize={11} tickLine={false} axisLine={false} />
-                <Tooltip contentStyle={{ background: "var(--popover)", border: "1px solid var(--border)", borderRadius: 8, fontSize: 12 }} />
-                <Area type="monotone" dataKey="value" stroke="var(--primary)" strokeWidth={2} fill="url(#g)" />
+                <XAxis
+                  dataKey="day"
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="var(--muted-foreground)"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "var(--popover)",
+                    border: "1px solid var(--border)",
+                    borderRadius: 8,
+                    fontSize: 12,
+                  }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="var(--primary)"
+                  strokeWidth={2}
+                  fill="url(#g)"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl border border-border bg-card p-5 relative overflow-hidden">
-          {!data && <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm"><div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div></div>}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="rounded-2xl border border-border bg-card p-5 relative overflow-hidden"
+        >
+          {!data && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-card/50 backdrop-blur-sm">
+              <div className="size-6 rounded-full border-2 border-primary border-t-transparent animate-spin"></div>
+            </div>
+          )}
           <div className="flex items-center justify-between">
             <p className="text-sm font-semibold">Activity</p>
             <Activity className="size-4 text-muted-foreground" />
@@ -87,10 +166,18 @@ function Dashboard() {
               <p className="text-sm text-muted-foreground">No activity yet — start a session.</p>
             )}
             {d.recentActivity.map((r: any, i: number) => (
-              <motion.li key={i} initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3 + i * 0.05 }} className="flex items-start gap-3">
+              <motion.li
+                key={i}
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 + i * 0.05 }}
+                className="flex items-start gap-3"
+              >
                 <div className="mt-1.5 size-2 rounded-full bg-success" />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm">Marked present in <span className="font-medium">{r.sessionName}</span></p>
+                  <p className="truncate text-sm">
+                    Marked present in <span className="font-medium">{r.sessionName}</span>
+                  </p>
                   <p className="text-xs text-muted-foreground">{fmtTime(r.markedAt)}</p>
                 </div>
               </motion.li>
@@ -99,13 +186,21 @@ function Dashboard() {
         </motion.div>
       </div>
 
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="rounded-2xl border border-dashed border-border p-5">
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="rounded-2xl border border-dashed border-border p-5"
+      >
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <p className="text-sm font-semibold">Ready to take attendance?</p>
             <p className="text-xs text-muted-foreground">Create a new session with a dynamic QR.</p>
           </div>
-          <Link to="/faculty/sessions" className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+          <Link
+            to="/faculty/sessions"
+            className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+          >
             Create session
           </Link>
         </div>

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pulse-backend-service
+  namespace: pulse-attendance
+  labels:
+    app: pulse-backend
+    app.kubernetes.io/name: pulse-backend
+    app.kubernetes.io/part-of: pulse-attendance
+    app.kubernetes.io/component: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: pulse-backend
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP

@@ -38,7 +38,10 @@ function AdminLoginPage() {
 
     const r = await loginAdmin(email, password);
     setBusy(false);
-    if (!r.ok) { setErr(r.error); return; }
+    if (!r.ok) {
+      setErr(r.error);
+      return;
+    }
     toast.success("Welcome, Admin");
     nav({ to: "/admin/dashboard" });
   };
@@ -57,9 +60,19 @@ function AdminLoginPage() {
         </div>
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">System Administration</h2>
-          <p className="mt-1 text-sm text-muted-foreground">Sign in with your administrative credentials.</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Sign in with your administrative credentials.
+          </p>
         </div>
-        <Field label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} leftIcon={<Mail />} placeholder="admin@college.edu" required />
+        <Field
+          label="Email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          leftIcon={<Mail />}
+          placeholder="admin@college.edu"
+          required
+        />
         <Field
           label="Password"
           type={show ? "text" : "password"}
@@ -69,7 +82,11 @@ function AdminLoginPage() {
           required
           error={err}
           rightSlot={
-            <button type="button" onClick={() => setShow((v) => !v)} className="text-muted-foreground hover:text-foreground">
+            <button
+              type="button"
+              onClick={() => setShow((v) => !v)}
+              className="text-muted-foreground hover:text-foreground"
+            >
               {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           }
@@ -82,7 +99,9 @@ function AdminLoginPage() {
           {busy ? "Authenticating…" : "Secure Sign In"}
         </button>
         <p className="text-center text-xs text-muted-foreground mt-4">
-          <Link to="/" className="text-foreground hover:underline">Return to home</Link>
+          <Link to="/" className="text-foreground hover:underline">
+            Return to home
+          </Link>
         </p>
       </motion.form>
     </AuthShell>

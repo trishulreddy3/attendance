@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pulse-frontend-service
+  namespace: pulse-attendance
+  labels:
+    app: pulse-frontend
+    app.kubernetes.io/name: pulse-frontend
+    app.kubernetes.io/part-of: pulse-attendance
+    app.kubernetes.io/component: frontend
+spec:
+  type: ClusterIP
+  selector:
+    app: pulse-frontend
+  ports:
+    - name: http
+      port: 3000
+      targetPort: 3000
+      protocol: TCP

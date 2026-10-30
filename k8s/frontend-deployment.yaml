@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pulse-frontend
+  namespace: pulse-attendance
+  labels:
+    app: pulse-frontend
+    app.kubernetes.io/name: pulse-frontend
+    app.kubernetes.io/part-of: pulse-attendance
+    app.kubernetes.io/component: frontend
+spec:
+  replicas: 2
+  revisionHistoryLimit: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: pulse-frontend
+  template:
+    metadata:
+      labels:
+        app: pulse-frontend
+        app.kubernetes.io/name: pulse-frontend
+        app.kubernetes.io/part-of: pulse-attendance
+        app.kubernetes.io/component: frontend
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: frontend
+          image: ghcr.io/trishulreddy3/pulse-frontend:latest
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 3000
+              protocol: TCP
+          env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: FRONTEND_PORT
+            - name: HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: HOST
+            - name: NODE_ENV
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: NODE_ENV
+            - name: VITE_API_BASE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: VITE_API_BASE_URL
+            - name: VITE_WS_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: pulse-config
+                  key: VITE_WS_URL
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+            failureThreshold: 2

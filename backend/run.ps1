@@ -8,5 +8,5 @@ Get-Content .env | ForEach-Object {
     }
 }
 
-Write-Host "Starting Pulse Backend (MongoDB) on port 8080..." -ForegroundColor Green
-./mvnw spring-boot:run
+Write-Host "Starting Pulse Backend (MongoDB) on port 8081..." -ForegroundColor Green
+./mvnw.cmd spring-boot:run

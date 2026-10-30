@@ -1,18 +1,36 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Users, GraduationCap, Radio, CheckCircle2, MoreHorizontal, TrendingUp, Activity, UserPlus, Server } from "lucide-react";
+import {
+  Users,
+  GraduationCap,
+  Radio,
+  CheckCircle2,
+  MoreHorizontal,
+  TrendingUp,
+  Activity,
+  UserPlus,
+  Server,
+} from "lucide-react";
 import { motion } from "framer-motion";
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer,
-  PieChart, Pie, Cell
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
 } from "recharts";
 
 export const Route = createFileRoute("/admin/dashboard")({
   component: AdminDashboard,
 });
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899'];
+const COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6", "#ec4899"];
 
 function AnimatedStatCard({ title, value, icon, delay, trend, description }: any) {
   return (
@@ -23,9 +41,7 @@ function AnimatedStatCard({ title, value, icon, delay, trend, description }: any
       className="relative overflow-hidden rounded-2xl border border-border/50 bg-card/40 backdrop-blur-xl p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/20 group"
     >
       <div className="absolute -right-6 -top-6 text-primary/5 transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-12">
-        <div className="scale-75 opacity-70">
-          {icon}
-        </div>
+        <div className="scale-75 opacity-70">{icon}</div>
       </div>
       <div className="flex items-center gap-4">
         <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
@@ -60,7 +76,9 @@ function AdminDashboard() {
       <div className="p-8 max-w-[1600px] mx-auto space-y-8 animate-pulse">
         <div className="h-10 w-48 bg-muted rounded-lg" />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-muted rounded-2xl" />)}
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-muted rounded-2xl" />
+          ))}
         </div>
       </div>
     );
@@ -85,12 +103,15 @@ function AdminDashboard() {
     acc[f.branch] = (acc[f.branch] || 0) + 1;
     return acc;
   }, {});
-  const branchData = Object.entries(branchCounts).map(([name, value]) => ({ name, value }));
+  const branchData = Object.entries(branchCounts).map(([name, value]) => ({
+    name,
+    value: Number(value),
+  }));
 
   return (
     <div className="p-4 sm:p-8 max-w-[1600px] mx-auto space-y-8">
       {/* Header section with gradient */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary/10 via-background to-background border border-border p-8"
@@ -101,38 +122,39 @@ function AdminDashboard() {
         <div className="relative z-10">
           <h1 className="text-3xl font-bold tracking-tight mb-2">Welcome back, Admin 👋</h1>
           <p className="text-muted-foreground max-w-xl">
-            Here's what's happening in the Pulse Attendance System today. The system is running smoothly.
+            Here's what's happening in the Pulse Attendance System today. The system is running
+            smoothly.
           </p>
         </div>
       </motion.div>
-      
+
       {/* KPI Cards */}
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <AnimatedStatCard 
-          title="Total Faculty" 
-          value={data.totalFaculty} 
-          icon={<Users className="size-full" />} 
+        <AnimatedStatCard
+          title="Total Faculty"
+          value={data.totalFaculty}
+          icon={<Users className="size-full" />}
           delay={0.1}
           description="Active teaching staff accounts"
         />
-        <AnimatedStatCard 
-          title="Total Students" 
-          value={data.totalStudents} 
-          icon={<GraduationCap className="size-full" />} 
+        <AnimatedStatCard
+          title="Total Students"
+          value={data.totalStudents}
+          icon={<GraduationCap className="size-full" />}
           delay={0.2}
           description="Registered student devices"
         />
-        <AnimatedStatCard 
-          title="Active Sessions" 
-          value={data.totalSessions} 
-          icon={<Radio className="size-full" />} 
+        <AnimatedStatCard
+          title="Active Sessions"
+          value={data.totalSessions}
+          icon={<Radio className="size-full" />}
           delay={0.3}
           description="Total attendance sessions created"
         />
-        <AnimatedStatCard 
-          title="Total Pings" 
-          value={data.totalAttendance} 
-          icon={<CheckCircle2 className="size-full" />} 
+        <AnimatedStatCard
+          title="Total Pings"
+          value={data.totalAttendance}
+          icon={<CheckCircle2 className="size-full" />}
           delay={0.4}
           description="Successful attendance marks recorded"
         />
@@ -141,7 +163,7 @@ function AdminDashboard() {
       {/* Charts Section */}
       <div className="grid gap-6 lg:grid-cols-3">
         {/* Main Bar Chart */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
@@ -153,18 +175,40 @@ function AdminDashboard() {
                 <Activity className="size-5 text-primary" />
                 Weekly Attendance Activity
               </h2>
-              <p className="text-xs text-muted-foreground mt-1">Number of attendances marked per day (Last 7 Days)</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Number of attendances marked per day (Last 7 Days)
+              </p>
             </div>
           </div>
           <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={activityData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="currentColor" className="opacity-10" />
-                <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 12 }} className="text-muted-foreground" />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12 }} className="text-muted-foreground" />
-                <RechartsTooltip 
-                  cursor={{ fill: 'rgba(var(--primary), 0.1)' }}
-                  contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }}
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  vertical={false}
+                  stroke="currentColor"
+                  className="opacity-10"
+                />
+                <XAxis
+                  dataKey="label"
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                  className="text-muted-foreground"
+                />
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
+                  tick={{ fontSize: 12 }}
+                  className="text-muted-foreground"
+                />
+                <RechartsTooltip
+                  cursor={{ fill: "rgba(var(--primary), 0.1)" }}
+                  contentStyle={{
+                    borderRadius: "12px",
+                    border: "1px solid var(--border)",
+                    backgroundColor: "var(--card)",
+                  }}
                 />
                 <Bar dataKey="value" fill="var(--primary)" radius={[4, 4, 0, 0]} maxBarSize={50} />
               </BarChart>
@@ -173,7 +217,7 @@ function AdminDashboard() {
         </motion.div>
 
         {/* Donut Chart */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
@@ -200,19 +244,28 @@ function AdminDashboard() {
                       <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
-                  <RechartsTooltip 
-                    contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', backgroundColor: 'var(--card)' }}
+                  <RechartsTooltip
+                    contentStyle={{
+                      borderRadius: "12px",
+                      border: "1px solid var(--border)",
+                      backgroundColor: "var(--card)",
+                    }}
                   />
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">No faculty data</div>
+              <div className="h-full flex items-center justify-center text-muted-foreground text-sm">
+                No faculty data
+              </div>
             )}
           </div>
           <div className="grid grid-cols-2 gap-2 mt-4">
             {branchData.map((b, i) => (
               <div key={b.name} className="flex items-center gap-2 text-xs">
-                <span className="size-2.5 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }} />
+                <span
+                  className="size-2.5 rounded-full"
+                  style={{ backgroundColor: COLORS[i % COLORS.length] }}
+                />
                 <span className="truncate">{b.name}</span>
                 <span className="ml-auto font-medium">{b.value}</span>
               </div>
@@ -222,7 +275,7 @@ function AdminDashboard() {
       </div>
 
       {/* Modern Data Table */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.7 }}
@@ -231,13 +284,18 @@ function AdminDashboard() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between p-6 border-b border-border/50 gap-4">
           <div>
             <h2 className="text-lg font-semibold">Faculty Directory</h2>
-            <p className="text-sm text-muted-foreground">Manage system administrators and teaching staff.</p>
+            <p className="text-sm text-muted-foreground">
+              Manage system administrators and teaching staff.
+            </p>
           </div>
-          <Link to="/admin/faculty" className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:opacity-90">
+          <Link
+            to="/admin/faculty"
+            className="inline-flex h-9 items-center justify-center rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-colors hover:opacity-90"
+          >
             <UserPlus className="mr-2 size-4" /> Add Faculty
           </Link>
         </div>
-        
+
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -268,9 +326,7 @@ function AdminDashboard() {
                       {f.branch}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-muted-foreground">
-                    {f.mobile}
-                  </td>
+                  <td className="px-6 py-4 text-muted-foreground">{f.mobile}</td>
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2 py-1 text-xs font-medium text-emerald-500">
                       <span className="size-1.5 rounded-full bg-emerald-500" /> Active
@@ -291,7 +347,9 @@ function AdminDashboard() {
                         <Users className="size-6 text-muted-foreground" />
                       </div>
                       <p className="mt-4 text-lg font-semibold">No faculty members</p>
-                      <p className="mt-2 text-sm text-muted-foreground">Get started by adding teaching staff to the system.</p>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Get started by adding teaching staff to the system.
+                      </p>
                     </div>
                   </td>
                 </tr>

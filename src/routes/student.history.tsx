@@ -35,10 +35,14 @@ function HistoryPage() {
   }, [sessions, me, subject, month]);
 
   const subjects = Array.from(new Set(sessions.map((s) => s.subject)));
-  const months = Array.from(new Set(sessions.map((s) => {
-    const d = new Date(s.startTime);
-    return `${d.getFullYear()}-${d.getMonth()}`;
-  })));
+  const months = Array.from(
+    new Set(
+      sessions.map((s) => {
+        const d = new Date(s.startTime);
+        return `${d.getFullYear()}-${d.getMonth()}`;
+      }),
+    ),
+  );
 
   if (!me) return null;
 
@@ -51,15 +55,31 @@ function HistoryPage() {
 
       <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border bg-card p-3">
         <Filter className="size-4 text-muted-foreground" />
-        <select value={subject} onChange={(e) => setSubject(e.target.value)} className="h-9 rounded-md border border-input bg-card px-2 text-sm">
+        <select
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          className="h-9 rounded-md border border-input bg-card px-2 text-sm"
+        >
           <option value="ALL">All subjects</option>
-          {subjects.map((s) => <option key={s} value={s}>{s}</option>)}
+          {subjects.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
-        <select value={month} onChange={(e) => setMonth(e.target.value)} className="h-9 rounded-md border border-input bg-card px-2 text-sm">
+        <select
+          value={month}
+          onChange={(e) => setMonth(e.target.value)}
+          className="h-9 rounded-md border border-input bg-card px-2 text-sm"
+        >
           <option value="ALL">All months</option>
           {months.map((m) => {
             const [y, mo] = m.split("-").map(Number);
-            return <option key={m} value={m}>{new Date(y, mo).toLocaleDateString([], { month: "long", year: "numeric" })}</option>;
+            return (
+              <option key={m} value={m}>
+                {new Date(y, mo).toLocaleDateString([], { month: "long", year: "numeric" })}
+              </option>
+            );
           })}
         </select>
       </div>
@@ -77,12 +97,16 @@ function HistoryPage() {
             transition={{ delay: Math.min(i, 6) * 0.04 }}
             className="relative pl-6 pb-4"
           >
-            <span className={`absolute -left-[7px] top-2 size-3 rounded-full ring-4 ring-background ${r.present ? "bg-success" : "bg-destructive"}`} />
+            <span
+              className={`absolute -left-[7px] top-2 size-3 rounded-full ring-4 ring-background ${r.present ? "bg-success" : "bg-destructive"}`}
+            />
             <div className="rounded-xl border border-border bg-card p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="font-semibold">{r.s.name}</p>
-                  <p className="text-xs text-muted-foreground">{r.s.subject} · {fmtDate(r.s.startTime)} · {fmtTime(r.s.startTime)}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {r.s.subject} · {fmtDate(r.s.startTime)} · {fmtTime(r.s.startTime)}
+                  </p>
                 </div>
                 {r.present ? (
                   <span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[11px] font-medium text-success">
@@ -94,7 +118,9 @@ function HistoryPage() {
                   </span>
                 )}
               </div>
-              {r.at && <p className="mt-1 text-xs text-muted-foreground">Marked at {fmtTime(r.at)}</p>}
+              {r.at && (
+                <p className="mt-1 text-xs text-muted-foreground">Marked at {fmtTime(r.at)}</p>
+              )}
             </div>
           </motion.li>
         ))}

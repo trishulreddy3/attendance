@@ -69,8 +69,12 @@ export function AppShell({
             {isAdmin ? "A" : (me?.name?.[0] ?? "U")}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-sm font-medium">{isAdmin ? "Administrator" : (me?.name ?? "User")}</p>
-            <p className="truncate text-xs text-muted-foreground">{isAdmin ? "admin@system" : me?.email}</p>
+            <p className="truncate text-sm font-medium">
+              {isAdmin ? "Administrator" : (me?.name ?? "User")}
+            </p>
+            <p className="truncate text-xs text-muted-foreground">
+              {isAdmin ? "admin@system" : me?.email}
+            </p>
           </div>
           <button
             onClick={() => {
@@ -130,7 +134,13 @@ export function AppShell({
               className="rounded-md p-2 text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
               aria-label="Toggle theme"
             >
-              <motion.span key={theme} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} transition={{ duration: 0.25 }} className="inline-flex">
+              <motion.span
+                key={theme}
+                initial={{ rotate: -90, opacity: 0 }}
+                animate={{ rotate: 0, opacity: 1 }}
+                transition={{ duration: 0.25 }}
+                className="inline-flex"
+              >
                 {theme === "dark" ? <Sun className="size-4" /> : <Moon className="size-4" />}
               </motion.span>
             </button>

@@ -131,4 +131,44 @@ public class Responses {
             long totalSessions,
             int attendancePct
     ) {}
+
+    // ─── 7-Period Daily Attendance DTOs ──────────────────────────────────────
+    public record DailyPeriodStatusDTO(
+            String studentId,
+            String rollNumber,
+            String studentName,
+            String department,
+            java.util.Map<Integer, String> periods
+    ) {}
+
+    public record DailyAttendanceGridDTO(
+            LocalDate date,
+            String department,
+            List<DailyPeriodStatusDTO> students
+    ) {}
+
+    // ─── Monthly Report & Calculation DTOs ────────────────────────────────────
+    public record MonthlyStudentReportDTO(
+            String rollNumber,
+            String studentName,
+            String studentId,
+            String department,
+            int workingPeriods,
+            int presentPeriods,
+            int absentPeriods,
+            double attendancePercentage,
+            boolean belowThreshold
+    ) {}
+
+    public record MonthlyClassReportDTO(
+            String department,
+            int year,
+            int month,
+            int workingPeriods,
+            double threshold,
+            List<MonthlyStudentReportDTO> students,
+            int belowThresholdCount,
+            double averageAttendancePercentage
+    ) {}
 }
+

@@ -30,7 +30,10 @@ function LiveSession() {
     if (!session) return;
     const i = setInterval(() => {
       setCountdown((c) => {
-        if (c <= 1) { refreshQr(session.id); return 30; }
+        if (c <= 1) {
+          refreshQr(session.id);
+          return 30;
+        }
         return c - 1;
       });
     }, 1000);
@@ -50,7 +53,9 @@ function LiveSession() {
     return (
       <div className="grid place-items-center py-24 text-center text-sm text-muted-foreground">
         <p>Session not found.</p>
-        <Link to="/faculty/sessions" className="mt-3 text-primary hover:underline">Back to sessions</Link>
+        <Link to="/faculty/sessions" className="mt-3 text-primary hover:underline">
+          Back to sessions
+        </Link>
       </div>
     );
   }
@@ -62,7 +67,10 @@ function LiveSession() {
   return (
     <div className="mx-auto max-w-7xl">
       <div className="mb-5 flex items-center justify-between">
-        <Link to="/faculty/sessions" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
+        <Link
+          to="/faculty/sessions"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+        >
           <ArrowLeft className="size-4" /> All sessions
         </Link>
         {isEnded ? (
@@ -81,16 +89,28 @@ function LiveSession() {
       </div>
 
       <div className="grid gap-5 lg:grid-cols-5">
-        <motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} className="lg:col-span-3 rounded-2xl border border-border bg-card p-6">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.96 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="lg:col-span-3 rounded-2xl border border-border bg-card p-6"
+        >
           <div className="flex items-start justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">Now collecting</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                Now collecting
+              </p>
               <h2 className="mt-1 text-2xl font-semibold tracking-tight">{session.name}</h2>
-              <p className="text-sm text-muted-foreground">{session.subject} · {session.branch}</p>
+              <p className="text-sm text-muted-foreground">
+                {session.subject} · {session.branch}
+              </p>
             </div>
             <div className="text-right">
-              <p className="text-xs uppercase tracking-wider text-muted-foreground">{isEnded ? "Status" : "Ends in"}</p>
-              <p className="text-2xl font-semibold tabular-nums tracking-tight">{isEnded ? "Ended" : remaining}</p>
+              <p className="text-xs uppercase tracking-wider text-muted-foreground">
+                {isEnded ? "Status" : "Ends in"}
+              </p>
+              <p className="text-2xl font-semibold tabular-nums tracking-tight">
+                {isEnded ? "Ended" : remaining}
+              </p>
             </div>
           </div>
 
@@ -105,7 +125,13 @@ function LiveSession() {
                   transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
                   className="rounded-3xl border border-border bg-white p-5 shadow-[0_30px_80px_-30px_color-mix(in_oklab,var(--primary)_40%,transparent)]"
                 >
-                  <QRCodeSVG value={payload} size={260} bgColor="#ffffff" fgColor="#111827" level="M" />
+                  <QRCodeSVG
+                    value={payload}
+                    size={260}
+                    bgColor="#ffffff"
+                    fgColor="#111827"
+                    level="M"
+                  />
                 </motion.div>
               </AnimatePresence>
               <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-border bg-card px-3 py-1 text-[11px] font-medium shadow">
@@ -118,28 +144,38 @@ function LiveSession() {
             <span className="font-mono truncate">{session.qrToken}</span>
             <div className="flex items-center gap-2">
               {!isEnded && (
-                <button 
+                <button
                   disabled={terminating}
                   onClick={async () => {
                     setTerminating(true);
-                    try { await endSession(session.id); } catch (e) { console.error(e); }
+                    try {
+                      await endSession(session.id);
+                    } catch (e) {
+                      console.error(e);
+                    }
                     setTerminating(false);
-                  }} 
+                  }}
                   className="inline-flex items-center gap-1 rounded-md border border-destructive/20 bg-destructive/10 text-destructive px-2.5 py-1 hover:bg-destructive/20 disabled:opacity-50"
                 >
                   {terminating ? "Ending..." : "End Session"}
                 </button>
               )}
-              <button disabled={isEnded || isRefreshing.current} onClick={async () => { 
-                if (isRefreshing.current) return;
-                isRefreshing.current = true;
-                try {
-                  await refreshQr(session.id); 
-                  setCountdown(30);
-                } finally {
-                  setTimeout(() => { isRefreshing.current = false; }, 500); // 500ms debounce
-                }
-              }} className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent disabled:opacity-50">
+              <button
+                disabled={isEnded || isRefreshing.current}
+                onClick={async () => {
+                  if (isRefreshing.current) return;
+                  isRefreshing.current = true;
+                  try {
+                    await refreshQr(session.id);
+                    setCountdown(30);
+                  } finally {
+                    setTimeout(() => {
+                      isRefreshing.current = false;
+                    }, 500); // 500ms debounce
+                  }
+                }}
+                className="inline-flex items-center gap-1 rounded-md border border-border bg-card px-2.5 py-1 hover:bg-accent disabled:opacity-50"
+              >
                 <RefreshCcw className="size-3.5" /> Refresh now
               </button>
             </div>
@@ -147,27 +183,44 @@ function LiveSession() {
         </motion.div>
 
         <div className="lg:col-span-2 space-y-4">
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="rounded-2xl border border-border bg-card p-5">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="rounded-2xl border border-border bg-card p-5"
+          >
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs uppercase tracking-wider text-muted-foreground">Attendance</p>
                 <p className="mt-1 text-3xl font-semibold tracking-tight">
-                  <AnimatedCounter value={attendees.length} /> <span className="text-base text-muted-foreground">/ {students.filter((s) => s.branch === session.branch).length}</span>
+                  <AnimatedCounter value={attendees.length} />{" "}
+                  <span className="text-base text-muted-foreground">
+                    / {students.filter((s) => s.branch === session.branch).length}
+                  </span>
                 </p>
               </div>
-              <div className="grid size-10 place-items-center rounded-xl bg-accent text-primary"><Users className="size-5" /></div>
+              <div className="grid size-10 place-items-center rounded-xl bg-accent text-primary">
+                <Users className="size-5" />
+              </div>
             </div>
             <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-muted">
               <motion.div
                 className="h-full bg-primary"
                 initial={{ width: 0 }}
-                animate={{ width: `${Math.min(100, (attendees.length / Math.max(1, students.filter((s) => s.branch === session.branch).length)) * 100)}%` }}
+                animate={{
+                  width: `${Math.min(100, (attendees.length / Math.max(1, students.filter((s) => s.branch === session.branch).length)) * 100)}%`,
+                }}
                 transition={{ type: "spring", stiffness: 80, damping: 18 }}
               />
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-2xl border border-border bg-card">
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.15 }}
+            className="rounded-2xl border border-border bg-card"
+          >
             <div className="border-b border-border px-5 py-3.5">
               <p className="text-sm font-semibold">Live feed</p>
               <p className="text-xs text-muted-foreground">Students appear as they scan.</p>
@@ -186,17 +239,26 @@ function LiveSession() {
                       transition={{ type: "spring", stiffness: 380, damping: 32 }}
                       className="flex items-center gap-3 rounded-lg px-2 py-2"
                     >
-                      <div className="grid size-7 place-items-center rounded-full bg-success/15 text-success"><CheckCircle2 className="size-4" /></div>
+                      <div className="grid size-7 place-items-center rounded-full bg-success/15 text-success">
+                        <CheckCircle2 className="size-4" />
+                      </div>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium">{st?.name ?? "Unknown"} <span className="text-muted-foreground font-normal">joined</span></p>
-                        <p className="text-[11px] text-muted-foreground">{st?.studentId} · {fmtTime(a.at)}</p>
+                        <p className="truncate text-sm font-medium">
+                          {st?.name ?? "Unknown"}{" "}
+                          <span className="text-muted-foreground font-normal">joined</span>
+                        </p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {st?.studentId} · {fmtTime(a.at)}
+                        </p>
                       </div>
                     </motion.li>
                   );
                 })}
               </AnimatePresence>
               {attendees.length === 0 && (
-                <li className="px-3 py-10 text-center text-sm text-muted-foreground">Waiting for the first scan…</li>
+                <li className="px-3 py-10 text-center text-sm text-muted-foreground">
+                  Waiting for the first scan…
+                </li>
               )}
             </ul>
           </motion.div>

@@ -10,15 +10,15 @@ export async function getDeviceFingerprint(): Promise<string> {
       screen.width,
       screen.height,
       screen.colorDepth,
-      new Date().getTimezoneOffset()
+      new Date().getTimezoneOffset(),
     ].join("|");
-    
+
     // Hash it using SHA-256 for a cleaner fingerprint
     const msgBuffer = new TextEncoder().encode(rawData);
     const hashBuffer = await crypto.subtle.digest("SHA-256", msgBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
-    token = hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-    
+    token = hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
+
     localStorage.setItem(STORAGE_KEY, token);
   }
 

@@ -22,7 +22,6 @@ const TITLES: Record<string, string> = {
   "/admin/batches": "Batch Management",
 };
 
-
 function AdminLayout() {
   const { user, loading } = useApp();
   const nav = useNavigate();

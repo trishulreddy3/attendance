@@ -28,69 +28,97 @@ function LoginPage() {
     }
   }, [user, nav]);
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submit = async (e?: React.FormEvent) => {
+    if (e && e.preventDefault) e.preventDefault();
+    console.log("LOGIN SUBMIT CALLED:", { email, password });
     if (busy) return;
     setErr(undefined);
     setBusy(true);
 
     const r = await loginFaculty(email, password);
     setBusy(false);
-    if (!r.ok) { setErr(r.error); return; }
+    if (!r.ok) {
+      setErr(r.error);
+      return;
+    }
     toast.success("Welcome back");
     nav({ to: "/faculty/dashboard" });
   };
 
   return (
     <AuthShell>
-      <motion.form
-        onSubmit={submit}
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="w-full max-w-sm space-y-4"
-      >
+      <form onSubmit={submit} action="#" className="w-full max-w-sm space-y-4">
         <div>
           <h2 className="text-2xl font-semibold tracking-tight">Welcome back</h2>
           <p className="mt-1 text-sm text-muted-foreground">Sign in to your faculty account.</p>
         </div>
-        <Field label="Email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} leftIcon={<Mail />} placeholder="you@college.edu" required />
+        <Field
+          label="Email"
+          type="email"
+          data-testid="login-email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          leftIcon={<Mail />}
+          placeholder="you@college.edu"
+          required
+        />
         <Field
           label="Password"
           type={show ? "text" : "password"}
+          data-testid="login-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           leftIcon={<Lock />}
           required
           error={err}
           rightSlot={
-            <button type="button" onClick={() => setShow((v) => !v)} className="text-muted-foreground hover:text-foreground">
+            <button
+              type="button"
+              onClick={() => setShow((v) => !v)}
+              className="text-muted-foreground hover:text-foreground"
+            >
               {show ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
           }
         />
         <div className="flex items-center justify-between text-xs">
           <label className="flex cursor-pointer items-center gap-2 text-muted-foreground">
-            <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)} className="size-3.5 accent-[var(--primary)]" />
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="size-3.5 accent-[var(--primary)]"
+            />
             Remember me
           </label>
-          <button type="button" onClick={() => toast("Reset link sent")} className="text-primary hover:underline">
+          <button
+            type="button"
+            onClick={() => toast("Reset link sent")}
+            className="text-primary hover:underline"
+          >
             Forgot password?
           </button>
         </div>
         <button
-          type="submit"
+          type="button"
+          data-testid="login-submit"
+          onClick={submit}
           disabled={busy}
           className="relative h-10 w-full overflow-hidden rounded-lg bg-primary text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-60"
         >
           {busy ? "Signing in…" : "Sign in"}
         </button>
         <p className="text-center text-xs text-muted-foreground">
-          Student? <Link to="/student-login" className="text-foreground hover:underline">Sign in here</Link>
+          Student?{" "}
+          <Link to="/student-login" className="text-foreground hover:underline">
+            Sign in here
+          </Link>
           {" | "}
-          <Link to="/admin-login" className="text-foreground hover:underline">Admin Login</Link>
+          <Link to="/admin-login" className="text-foreground hover:underline">
+            Admin Login
+          </Link>
         </p>
-      </motion.form>
+      </form>
     </AuthShell>
   );
 }
@@ -100,7 +128,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
     <div className="grid min-h-screen md:grid-cols-2">
       <div className="flex items-center justify-center p-6">
         <div className="w-full max-w-sm">
-          <div className="mb-8"><Logo /></div>
+          <div className="mb-8">
+            <Logo />
+          </div>
           {children}
         </div>
       </div>

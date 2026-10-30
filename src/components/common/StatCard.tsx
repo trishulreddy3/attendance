@@ -27,7 +27,9 @@ export function StatCard({
     >
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">{label}</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
+            {label}
+          </p>
           <p className="mt-2 text-3xl font-semibold tracking-tight">
             <AnimatedCounter value={value} suffix={suffix} />
           </p>

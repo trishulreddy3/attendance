@@ -99,7 +99,8 @@
   * {
     border-color: var(--color-border);
   }
-  html, body {
+  html,
+  body {
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
@@ -126,11 +127,19 @@
     animation: shimmer 1.6s ease-in-out infinite;
   }
   @keyframes shimmer {
-    0% { background-position: 200% 0; }
-    100% { background-position: -200% 0; }
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
   }
-  .scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: var(--border); border-radius: 999px;
+    background: var(--border);
+    border-radius: 999px;
   }
 }

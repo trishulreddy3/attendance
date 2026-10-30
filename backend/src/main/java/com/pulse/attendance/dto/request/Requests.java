@@ -33,20 +33,45 @@ public class Requests {
     ) {}
 
     public record CreateStudentReq(
-        @NotBlank String name,
-        @NotBlank String studentId,
-        @Email @NotBlank String email,
-        @NotBlank String mobile,
-        @NotBlank String branch,
-        @NotBlank String password
-    ) {}
+        @NotBlank(message = "Name is required") String name,
+        @NotBlank(message = "Student ID is required") String studentId,
+        String rollNumber,
+        @Email(message = "Invalid email format") @NotBlank(message = "Email is required") String email,
+        String mobile,
+        @NotBlank(message = "Department/Branch is required") String branch,
+        String password
+    ) {
+        public String getEffectiveRollNumber() {
+            return (rollNumber != null && !rollNumber.trim().isEmpty()) ? rollNumber.trim() : studentId.trim();
+        }
+    }
 
     public record UpdateStudentReq(
         String name,
+        String rollNumber,
         String email,
         String mobile,
         String branch,
         String password
+    ) {}
+
+    public record PeriodMarkReq(
+        @NotBlank(message = "Student ID is required") String studentId,
+        @NotNull(message = "Period is required") Integer period,
+        @NotBlank(message = "Status is required") String status
+    ) {}
+
+    public record SaveDailyAttendanceReq(
+        @NotBlank(message = "Department is required") String department,
+        @NotNull(message = "Date is required") LocalDate date,
+        @NotNull(message = "Attendance entries are required") java.util.List<PeriodMarkReq> entries
+    ) {}
+
+    public record BulkMarkDailyReq(
+        @NotBlank(message = "Department is required") String department,
+        @NotNull(message = "Date is required") LocalDate date,
+        @NotBlank(message = "Status is required") String status,
+        java.util.List<Integer> periods
     ) {}
 
     public record CreateSessionReq(
