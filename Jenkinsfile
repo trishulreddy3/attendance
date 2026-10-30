@@ -50,32 +50,42 @@
         // ====================================================================
         // STAGE 2: Frontend Dependencies & Code Verification
         // ====================================================================
+        stage('Install Frontend Dependencies') {
+            steps {
+                echo 'Installing frontend dependencies...'
+                script {
+                    if (isUnix()) {
+                        sh 'npm ci'
+                    } else {
+                        bat 'npm ci'
+                    }
+                }
+            }
+        }
+
         stage('Frontend Verification') {
             parallel {
-                stage('Dependencies & Lint') {
+                stage('ESLint') {
                     steps {
+                        echo 'Running ESLint...'
                         script {
-                            echo "Installing frontend dependencies using committed package-lock.json..."
                             if (isUnix()) {
-                                sh 'npm ci'
-                                echo "Running ESLint..."
                                 sh 'npm run lint'
                             } else {
-                                bat 'npm ci'
-                                echo "Running ESLint..."
                                 bat 'npm run lint'
                             }
                         }
                     }
                 }
+
                 stage('TypeScript Typecheck') {
                     steps {
+                        echo 'Validating TypeScript...'
                         script {
-                            echo "Validating TypeScript types across the application..."
                             if (isUnix()) {
-                                sh 'npx tsc --noEmit'
+                                sh 'npx --no-install tsc --noEmit'
                             } else {
-                                bat 'npx tsc --noEmit'
+                                bat 'npx --no-install tsc --noEmit'
                             }
                         }
                     }
